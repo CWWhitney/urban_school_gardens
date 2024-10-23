@@ -1,6 +1,6 @@
 # Urban School Garden 
 
-Nutrition Intervention Forecasting and Monitoring (NIFAM) funded by BLE
+Nutrition Intervention Forecasting and Monitoring (NIFAM) intervention by NIFAM partner (CODAS) funded by BLE (German Federal Office for Agriculture and Food)
 
 http://htmlpreview.github.io/?https://github.com/CWWhitney/nifam_codas_school_garden/blob/main/Index.html
 
