@@ -1,9 +1,10 @@
-# NIFAM CODAS School Garden
+# Urban School Garden 
+
+Nutrition Intervention Forecasting and Monitoring (NIFAM) funded by BLE
 
 http://htmlpreview.github.io/?https://github.com/CWWhitney/nifam_codas_school_garden/blob/main/Index.html
 
 [![DOI](https://zenodo.org/badge/670414311.svg)](https://zenodo.org/doi/10.5281/zenodo.10931166)
-
 
 Decision model for a school garden nutrition intervention in urban Hanoi. There are three simulated options: 
 1. A school garden on existing school property, as an informal addition to the school and passively used for education, 
