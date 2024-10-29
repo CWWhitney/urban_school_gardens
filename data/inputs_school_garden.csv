@@ -75,10 +75,12 @@ child_STEM_health_care_savings,20,,80,posnorm,Healthcare savings (children) STEM
 child_STEM_school_performance_value,2,,100,posnorm,School performance value (children) STEM garden (million VND/year)
 child_STEM_community_engagement_value,10,,250,posnorm,Community engagement value (children) STEM garden (million VND/year)
 ,,,,,
-green_space_value,1,,10,posnorm,Value of green space (million VND/year)
+green_space_eco_value,1,,10,posnorm,Value of green space (million VND/year)
 reduce_pollution_value,1,,3,posnorm,Value of reduced polution on school garden (million VND/year)
 chance_garden_is_fallow_green_space,0.001,,0.05,tnorm_0_1,Chance that the garden space is fallow green space (%)
-fallow_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace compared to garden (%)
+fallow_eco_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace compared to garden (%)
+green_space_health_value,1,,10,posnorm,Value of non-garden green space for child health (million VND/year)
+fallow_health_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace for child heatlh compared to garden (%)
 ,,,,,
 school_event_value,10,,200,posnorm,Value of garden related school events (million VND/event)
 school_event_freq,3,,10,posnorm,Number of school events per year (days/year)
