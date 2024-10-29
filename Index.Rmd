@@ -329,7 +329,7 @@ mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7,21:30]) #,
 <!-- mcSimulation_table_y <- data.frame(garden_simulation_results$y[1:11]) -->
 <!-- gtExtras::gt_plt_summary(mcSimulation_table_y) -->
 
-The full repository can be accessed at https://github.com/CWWhitney/urban_school_gardens 
+The full repository can be accessed at https://github.com/CWWhitney/urban_school_gardens
 
 <!-- The git create a qr -->
 <!-- library(qrcode) -->
