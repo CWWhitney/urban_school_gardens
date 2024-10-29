@@ -326,7 +326,7 @@ school_garden_function <- function(x, varnames){
   # here we determine the value of healthier choices with some proxy values
   child_healthier_choices <- child_garden_health_care_savings + 
     # children with a garden on campus may do better in school
-    # here is the expected efffect
+    # here is the expected effect
                             child_garden_school_performance_value + 
                             child_garden_community_engagement_value  
                           
@@ -364,7 +364,7 @@ school_garden_function <- function(x, varnames){
   # Here we also get abstract, we care about green space and pollution reduction
   
   environmental_value <- 
-    green_space_value + # we care about the green space
+    green_space_eco_value + # we care about the green space
     # citizens pay more to live close to green spaces
     # cities like Hanoi spend money on planting and maintaining parks and trees
     # - improve mental and physical health
@@ -394,12 +394,17 @@ school_garden_function <- function(x, varnames){
   # assuming it could be a green space
   # low chance since land is needed in the city
   
-  # CW #### ADD TO RANGES TO INPUT TABLE #####
-  
-  environmental_value_of_fallow_green_space <- (green_space_value + 
+  environmental_value_of_fallow_green_space <- (green_space_eco_value + 
                                                   reduce_pollution_value) * 
     # fallow green space is less valuable than managed garden green space by x amount
-                                                  fallow_reduction
+                                                  fallow_eco_reduction
+  
+  # Fallow land also has value to health (no garden health value)
+  
+  health_value_of_fallow_play_green_space <- (green_space_health_value + 
+                                                  reduce_pollution_value) * 
+    # fallow space has lower health value than managed garden space by x amount
+    fallow_health_reduction
   
   fallow_land <- chance_event(chance = chance_garden_is_fallow_green_space, 
                               value_if = 1, 
@@ -416,7 +421,10 @@ school_garden_function <- function(x, varnames){
                                      CV_value, 
                                      number_of_years, 
                                      relative_trend = inflation_rate) * ecological_risk
-  }
+    # overwrite for chance / use as 'No garden' results
+    environmental_value_of_fallow_green_space <- 0 
+    health_value_of_fallow_play_green_space <- 0
+    }
   
   # Add up all benefits ####
   total_benefit <- harvest_value + learning_value + 
@@ -523,14 +531,14 @@ school_garden_function <- function(x, varnames){
                             number_of_years, 
                             relative_trend = inflation_rate) 
   } else {
-    non_garden_value <- vv(value_of_non_garden_land_use, #i.e. playground
+    non_garden_value <- vv(value_of_non_garden_land_use, #i.e. cost of other playground
                             CV_value, 
                             number_of_years, 
                             relative_trend = inflation_rate)
   }
   
   
-  total_benefit_no <- vv(non_garden_value + # loss of playground, parking etc.
+  total_benefit_no <- vv(non_garden_value + # income loss of playground, parking etc.
                          school_board_planning, # time savings for board
                          var_CV = CV_value, 
                          n = number_of_years, 
@@ -594,6 +602,7 @@ school_garden_function <- function(x, varnames){
               biodiversity = biodiversity,
               health = health,
               health_STEM = health_STEM,
+              # others
               total_costs = sum(total_cost),
               total_costs_STEM = sum(total_cost_STEM),
               Cashflow_garden = garden_result, 
