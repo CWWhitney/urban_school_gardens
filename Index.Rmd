@@ -4,10 +4,15 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 
 library(gtExtras)
 library(svglite)
+library(decisionSupport)
+library(plotly)
+library(rPref)
+library(tidyverse)
 
 set.seed(42)
 ```
@@ -218,9 +223,10 @@ library(patchwork)
 
 dist_plot_NPV_garden_public | dist_plot_NPV_garden_STEM_public /
 plot_pls_garden | plot_pls_STEM /
-plot_evpi_STEM | plot_evpi_garden /
-plot_cashflow_garden | plot_cashflow_STEM
+plot_evpi_STEM | plot_evpi_garden 
 ```
+
+## Private schools
 
 ```{r full_figure_private_school}
 
@@ -251,11 +257,19 @@ library(patchwork)
 
 ```
 
-# Input data for the simulations 
+Cashflow for public and private schools
 
-```{r pareto_front}
+```{r cashflow_garden}
+plot_cashflow_garden | plot_cashflow_STEM
+```
+
+# Paretto front
+
+## Private schools paretto front
+
+```{r pareto_front_private}
 source("functions/plot_pareto.R")
-paretto_front(
+private_paretto <- paretto_front(
   economic_return_garden = garden_simulation_results$y$NPV_garden,
   child_health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
@@ -264,7 +278,28 @@ paretto_front(
   biodiversity_STEM = garden_simulation_results$y$biodiversity
 )
 
+ggplotly(private_paretto) 
+
 ```
+
+## Public schools paretto front
+
+```{r pareto_front_public}
+source("functions/plot_pareto.R")
+public_paretto <- paretto_front(
+  economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
+  child_health_garden = garden_simulation_results$y$health,
+  biodiversity_garden = garden_simulation_results$y$biodiversity,
+  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
+  child_health_STEM = garden_simulation_results$y$health_STEM,
+  biodiversity_STEM = garden_simulation_results$y$biodiversity
+)
+
+ggplotly(public_paretto) 
+
+```
+
+# Input data for the simulations 
 
 ## Summary
 
