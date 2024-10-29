@@ -25,21 +25,20 @@ garden_data <- data.frame(
 library(rPref)
 
 # Find Pareto-optimal points for stem data
-p <- high(stem_garden_data$biodiversity) * 
+p_stem <- high(stem_garden_data$biodiversity) * 
   high(stem_garden_data$child_health) * 
   high(stem_garden_data$economic_return)
 
-pareto_front_stem <- psel(stem_garden_data, p)
+pareto_front_stem <- psel(stem_garden_data, p_stem)
 
 # Find Pareto-optimal points for the garden decision option
 p_garden <- high(garden_data$biodiversity) * 
   high(garden_data$child_health) * 
   high(garden_data$economic_return)
+
 pareto_front_garden <- psel(garden_data, p_garden)
 
-
 # Plot Pareto front
-library(plotly)
 
 # Plot the Pareto front of the stem intervention (blue)
 plot <- plot_ly(
@@ -50,7 +49,7 @@ plot <- plot_ly(
   type = 'scatter3d',
   mode = 'markers',
   marker = list(size = 3, color = 'blue'),
-  name = 'STEM Pareto Front'
+  name = 'STEM Option Pareto Front'
 )
 
 # Plot the Pareto front of the garden decision option (red)
@@ -81,6 +80,3 @@ plot <- plot %>%
 return(plot)
 
 }
-
-
-
