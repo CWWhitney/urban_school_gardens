@@ -265,15 +265,15 @@ Cashflow for public and private schools
 plot_cashflow_garden | plot_cashflow_STEM
 ```
 
-# Paretto front
+# Pareto front
 
 These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. This approach aids decision-makers in visualizing and evaluating only the most efficient options, helping to balance biodiversity conservation, community health, and economic benefits effectively in the decision-making process.
 
-## Private schools paretto front
+## Private schools pareto front
 
 ```{r pareto_front_private}
 source("functions/plot_pareto.R")
-private_paretto <- paretto_front(
+private_pareto <- pareto_front(
   economic_return_garden = garden_simulation_results$y$NPV_garden,
   child_health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
@@ -282,15 +282,15 @@ private_paretto <- paretto_front(
   biodiversity_STEM = garden_simulation_results$y$biodiversity
 )
 
-ggplotly(private_paretto) 
+ggplotly(private_pareto) 
 
 ```
 
-## Public schools paretto front
+## Public schools pareto front
 
 ```{r pareto_front_public}
 source("functions/plot_pareto.R")
-public_paretto <- paretto_front(
+public_pareto <- pareto_front(
   economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
   child_health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
@@ -300,9 +300,9 @@ public_paretto <- paretto_front(
 )
 
 
-ggplotly(public_paretto) 
+ggplotly(public_pareto) 
 # library(htmlwidgets)
-# plot <- ggplotly(public_paretto) 
+# plot <- ggplotly(public_pareto) 
 # saveWidget(plot, "my_plot.html", selfcontained = TRUE)
 
 ```

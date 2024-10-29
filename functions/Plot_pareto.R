@@ -3,7 +3,7 @@
 
 # stem data for Pareto front (already computed)
 
-paretto_front <- function(economic_return_garden, child_health_garden, biodiversity_garden, 
+pareto_front <- function(economic_return_garden, child_health_garden, biodiversity_garden, 
   economic_return_STEM, child_health_STEM, biodiversity_STEM){
 ## combine the input data into two separate data frames, stem_garden_data and
 ## garden_data, for the two options being compared.
