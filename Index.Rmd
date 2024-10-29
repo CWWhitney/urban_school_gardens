@@ -1,6 +1,8 @@
 ---
 title: "School gardens in urban Hanoi"
-output: html_document
+output:
+  html_document:
+    selfcontained: true
 ---
 
 ```{r setup, include=FALSE}
@@ -265,6 +267,8 @@ plot_cashflow_garden | plot_cashflow_STEM
 
 # Paretto front
 
+These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. This approach aids decision-makers in visualizing and evaluating only the most efficient options, helping to balance biodiversity conservation, community health, and economic benefits effectively in the decision-making process.
+
 ## Private schools paretto front
 
 ```{r pareto_front_private}
@@ -295,7 +299,11 @@ public_paretto <- paretto_front(
   biodiversity_STEM = garden_simulation_results$y$biodiversity
 )
 
+
 ggplotly(public_paretto) 
+# library(htmlwidgets)
+# plot <- ggplotly(public_paretto) 
+# saveWidget(plot, "my_plot.html", selfcontained = TRUE)
 
 ```
 
