@@ -4,7 +4,7 @@
 # stem data for Pareto front (already computed)
 
 pareto_front <- function(economic_return_garden, child_health_garden, biodiversity_garden, 
-  economic_return_STEM, child_health_STEM, biodiversity_STEM){
+  economic_return_STEM, child_health_STEM, biodiversity_STEM, plot_return = plot_scatter){
 ## combine the input data into two separate data frames, stem_garden_data and
 ## garden_data, for the two options being compared.
   
@@ -40,6 +40,10 @@ p_stem <- high(stem_garden_data$biodiversity) *
 # maximized simultaneously.
 pareto_front_stem <- psel(stem_garden_data, p_stem)
 
+# plse() collects all non-dominated points in the MC results, 
+# as a set of Pareto-optimal solutions where it is
+# impossible to increase one objective without decreasing another
+
 # Find Pareto-optimal points for the garden decision option
 p_garden <- high(garden_data$biodiversity) * 
   high(garden_data$child_health) * 
@@ -56,10 +60,10 @@ pareto_front_garden <- psel(garden_data, p_garden)
 # decision-makers visualize and evaluate only those options that are efficient,
 # balancing biodiversity, child health, and economic return effectively. 
 
-# Pareto front
+# Pareto front as a 3d scatter plot ###
 
 # Plot the Pareto front of the stem intervention (blue)
-plot <- plot_ly(
+plot_scatter <- plot_ly(
   pareto_front_stem,
   x = ~biodiversity,
   y = ~child_health,
@@ -71,7 +75,7 @@ plot <- plot_ly(
 )
 
 # Plot the Pareto front of the garden decision option (red)
-plot <- plot %>%
+plot_scatter <- plot_scatter %>%
   add_trace(
     data = pareto_front_garden,
     x = ~biodiversity,
@@ -84,7 +88,7 @@ plot <- plot %>%
   )
 
 # Customize the layout
-plot <- plot %>%
+plot_scatter <- plot_scatter %>%
   layout(
     title = "Comparison of Pareto Fronts: STEM vs Garden Option",
     scene = list(
@@ -94,7 +98,61 @@ plot <- plot %>%
     )
   )
 
+
+### As surface plot ####
+
+# pareto_front_stem and pareto_front_garden contain the Pareto-optimal points
+
+# Interpolating a surface for STEM option
+interp_stem <- with(pareto_front_stem, interp(x = biodiversity, y = child_health, z = economic_return, 
+                                              duplicate = "mean"))
+
+# Interpolating a surface for Garden option
+interp_garden <- with(pareto_front_garden, interp(x = biodiversity, y = child_health, z = economic_return, 
+                                                  duplicate = "mean"))
+
+# Creating a plotly plot for STEM option
+plot <- plot_ly() %>%
+  add_surface(x = interp_stem$x, y = interp_stem$y, z = interp_stem$z, colorscale = 'Blues', 
+              showscale = FALSE, opacity = 0.7, name = 'STEM Option Pareto Front') %>%
+  layout(scene = list(
+    xaxis = list(title = "Biodiversity"),
+    yaxis = list(title = "Child Health"),
+    zaxis = list(title = "Economic Return")
+  ))
+
+# Adding Garden option surface
+plot <- plot %>%
+  add_surface(x = interp_garden$x, y = interp_garden$y, z = interp_garden$z, colorscale = 'Reds', 
+              showscale = FALSE, opacity = 0.7, name = 'Garden Option Pareto Front')
+
+# Assuming pareto_front_stem and pareto_front_garden contain the Pareto-optimal points
+
+# Interpolating a surface for STEM option
+interp_stem <- with(pareto_front_stem, interp(x = biodiversity, y = child_health, z = economic_return, 
+                                              duplicate = "mean"))
+
+# Interpolating a surface for Garden option
+interp_garden <- with(pareto_front_garden, interp(x = biodiversity, y = child_health, z = economic_return, 
+                                                  duplicate = "mean"))
+
+# Creating the plotly plot with single color legends
+plot_surface <- plot_ly() %>%
+  add_surface(x = interp_stem$x, y = interp_stem$y, z = interp_stem$z, 
+              colorscale = list(c(0, 'red'), c(1, 'red')),  # STEM option in red
+              opacity = 0.7, name = 'STEM Option', showscale = FALSE) %>%
+  add_surface(x = interp_garden$x, y = interp_garden$y, z = interp_garden$z, 
+              colorscale = list(c(0, 'blue'), c(1, 'blue')),  # Garden option in blue
+              opacity = 0.7, name = 'Garden Option', showscale = FALSE) %>%
+  
+  # Customize the layout
+  layout(scene = list(
+    xaxis = list(title = "Biodiversity"),
+    yaxis = list(title = "Child Health"),
+    zaxis = list(title = "Economic Return")
+  ))
+
 # Show the plot
-return(plot)
+return(plot_return)
 
 }
