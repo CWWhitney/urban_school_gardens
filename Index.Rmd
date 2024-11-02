@@ -9,14 +9,13 @@ output:
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 
-library(gtExtras)
-library(svglite)
 library(decisionSupport)
+library(gtExtras)
 library(plotly)
 library(rPref)
+library(svglite)
 library(tidyverse)
 
-set.seed(42)
 ```
 
 We model a decision impact pathway is for school gardens as a general intervention for sustainable children's food environments in urban Hanoi, Vietnam (Whitney et al. 2024). 
@@ -36,7 +35,7 @@ source("CODAS_Garden_Model.R")
 # Ensure consistent results with the random number generator
 # not for each 'run' of the MC simulation but for 
 # consistency each time we run the entire simulation 
-set.seed(1234) 
+set.seed(42)
 
 garden_simulation_results <- mcSimulation(
   estimate = estimate_read_csv("data/inputs_school_garden.csv"),
@@ -66,7 +65,7 @@ The same results as boxplots:
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
                                     vars = c("NPV_garden","NPV_garden_STEM", "NPV_garden_public_school", "NPV_garden_STEM_public_school"),
-                                    method = "boxplot", 
+                                    method = "boxplot_density", 
                                     base_size = 7, 
                                     x_axis_name = "Comparative NPV outcomes")
 ```
@@ -189,7 +188,6 @@ source("functions/plot_pls.R")
 plot_pls_garden <- plot_pls(pls_result, 
                             input_table = input_table, threshold = 0.9)
 
-
 #For school garden with formal STEM education
 pls_result_STEM <- pls_model(object = garden_simulation_results,
                   resultName = names(garden_simulation_results$y)[2], # the "NPV_garden_STEM" 
@@ -199,6 +197,7 @@ plot_pls_STEM <- plot_pls(pls_result_STEM, input_table = input_table, threshold 
 
 ```
 
+NPV for public schools 
 
 ```{r full_figure_public_school}
 
@@ -209,13 +208,13 @@ plot_pls_STEM <- plot_pls(pls_result_STEM, input_table = input_table, threshold 
 dist_plot_NPV_garden_public <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_public_school",
-                                    method = "boxplot", 
+                                    method = "boxplot_density", 
                                     base_size = 7)
 
 dist_plot_NPV_garden_STEM_public <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_STEM_public_school",
-                                    method = "boxplot", 
+                                    method = "boxplot_density", 
                                     base_size = 7)
 
 
@@ -223,12 +222,23 @@ dist_plot_NPV_garden_STEM_public <- plot_distributions(
 # devtools::install_github("thomasp85/patchwork")                                    
 library(patchwork)
 
-dist_plot_NPV_garden_public | dist_plot_NPV_garden_STEM_public /
-plot_pls_garden | plot_pls_STEM /
-plot_evpi_STEM | plot_evpi_garden 
+dist_plot_NPV_garden_public / dist_plot_NPV_garden_STEM_public 
+```
+PLS for public schools 
+
+```{r pls_public}
+plot_pls_garden / plot_pls_STEM 
+```
+
+EVPI for publis schools 
+
+```{r evpi_public}
+plot_evpi_STEM / plot_evpi_garden 
 ```
 
 ## Private schools
+
+NPV for private schools 
 
 ```{r full_figure_private_school}
 
@@ -239,13 +249,13 @@ plot_evpi_STEM | plot_evpi_garden
 dist_plot_NPV_garden <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden",
-                                    method = "boxplot", 
+                                    method = "boxplot_density", 
                                     base_size = 7)
 
 dist_plot_NPV_garden_STEM <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_STEM",
-                                    method = "boxplot", 
+                                    method = "boxplot_density", 
                                     base_size = 7)
 
 # "NPV_garden_public_school", "NPV_garden_STEM_public_school"),
@@ -254,20 +264,35 @@ dist_plot_NPV_garden_STEM <- plot_distributions(
 # devtools::install_github("thomasp85/patchwork")                                    
 library(patchwork)
 
-(dist_plot_NPV_garden+ inset_element(plot_cashflow_garden, 0.6, 0.6, 1, 1) | plot_pls_garden | plot_evpi_garden) /
-(dist_plot_NPV_garden_STEM+ inset_element(plot_cashflow_STEM, 0.6, 0.6, 1, 1) | plot_pls_STEM | plot_evpi_STEM) 
+dist_plot_NPV_garden /
+dist_plot_NPV_garden_STEM
 
 ```
 
-Cashflow for public and private schools
+PLS for private schools 
+
+```{r pls_private}
+plot_pls_garden / plot_evpi_garden 
+
+```
+
+EVPI for private schools 
+
+```{r evpi_private}
+ plot_pls_STEM / plot_evpi_STEM
+```
+
+## Cash flows
+
+Cash flow plots of the garden option without formal STEM education. These are the expected costs for public and private schools over the intervention.
 
 ```{r cashflow_garden}
-plot_cashflow_garden | plot_cashflow_STEM
+plot_cashflow_garden / plot_cashflow_STEM
 ```
 
 # Pareto front
 
-These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. This approach aids decision-makers in visualizing and evaluating only the most efficient options, helping to balance biodiversity conservation, community health, and economic benefits effectively in the decision-making process.
+These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
 
 ## Private schools pareto front
 
@@ -301,6 +326,7 @@ public_pareto <- pareto_front(
 
 
 ggplotly(public_pareto) 
+# option for interactive html 
 # library(htmlwidgets)
 # plot <- ggplotly(public_pareto) 
 # saveWidget(plot, "my_plot.html", selfcontained = TRUE)
@@ -316,15 +342,14 @@ Here we provide a summary of the garden intervention options. We do this with a 
 ```{r gtExtras_summary_x, warning=FALSE, message=FALSE}
 # Subset the outputs from the mcSimulation function (y) to summarize only on the variables that we want.
 # names(garden_simulation_results$x)
-mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7,21:30]) #,
- # names(garden_simulation_results$y)
+mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7,21:30]) #, ,32:41,43:70,73:76 also of possible interest
 
  gtExtras::gt_plt_summary(mcSimulation_table_x) 
 # a summary table with missing, mean, median and sd
 
 ```
 
-<!-- The table shows the variable name, the plot overview as well as the number of missing values, the mean, median and the standard deviation of the distribution for all variables that were calculated in the model.  -->
+The table shows the variable name, the plot overview as well as the number of missing values, the mean, median and the standard deviation of the distribution for variables that calculated in the model.
 
 <!-- mcSimulation_table_y <- data.frame(garden_simulation_results$y[1:11]) -->
 <!-- gtExtras::gt_plt_summary(mcSimulation_table_y) -->
