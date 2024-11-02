@@ -10,6 +10,7 @@ library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 
 library(decisionSupport)
+library(ggstance)
 library(gtExtras)
 library(plotly)
 library(rPref)
@@ -48,23 +49,52 @@ garden_simulation_results <- mcSimulation(
 
 The Net Present Value (i.e. current value of the future benefits) of the garden decision options over `r garden_simulation_results$x$number_of_years[1]` years of the intervention. For public and private schools the STEM costs are considered to be in the same garden space but with the additional costs and benefits of a full STEM education program. All options are compared to the same years of using the land for something that is not related to the garden, i.e. as a playground or for parking. Here we plot the distribution for the decision and frame the projected NPV. 
 
-```{r plot_dist, warning=FALSE, message=FALSE}
+For public schools
+
+```{r plot_dist_public, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden","NPV_garden_STEM", 
-                                             "NPV_garden_public_school", 
+                                    vars = c("NPV_garden_public_school", 
                                              "NPV_garden_STEM_public_school"),
                                     method = 'smooth_simple_overlay', 
                                     base_size = 7, 
                                     x_axis_name = "Comparative NPV outcomes")
 ```
 
-The same results as boxplots: 
+For private schools 
 
-```{r plot_boxplot, warning=FALSE, message=FALSE}
+```{r plot_dist_private, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden","NPV_garden_STEM", "NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                                    vars = c("NPV_garden","NPV_garden_STEM"),
+                                    method = 'smooth_simple_overlay', 
+                                    base_size = 7, 
+                                    x_axis_name = "Comparative NPV outcomes")
+```
+
+The same results as boxplots
+
+For public schools
+
+```{r plot_boxplot_public, warning=FALSE, message=FALSE}
+source("functions/plot_distributions.R")
+plot_distributions(mcSimulation_object = garden_simulation_results, 
+                                    vars = c("NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                   old_names = c("NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                   new_names = c("NPV public school garden", "NPV public school garden with STEM"),
+                                    method = "boxplot_density", 
+                                    base_size = 7, 
+                                    x_axis_name = "Comparative NPV outcomes")
+```
+
+For private schools
+
+```{r plot_boxplot_private, warning=FALSE, message=FALSE}
+source("functions/plot_distributions.R")
+plot_distributions(mcSimulation_object = garden_simulation_results, 
+                                    vars = c("NPV_garden","NPV_garden_STEM"),
+                   old_names = c("NPV_garden","NPV_garden_STEM"),
+                   new_names = c("NPV private school garden","NPV private school with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7, 
                                     x_axis_name = "Comparative NPV outcomes")
@@ -138,13 +168,12 @@ source("functions/multi_EVPI.R")
 
 ```
 
+Generate the plot for EVPI PLS and cashflows for public and private schools
 
 ```{r plot-evpi-NPV_garden}
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
 plot_evpi_garden <- plot_evpi(evpi, decision_vars = "NPV_garden")
-
-# In this case there were no high value variables. We can be confident in supporting the decision, even with our imperfect current understanding. 
 
 # Value of information for the garden option with formal STEM education.
 # using the results of the same multi_EVPI
@@ -208,12 +237,16 @@ NPV for public schools
 dist_plot_NPV_garden_public <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_public_school",
+         old_names = c("NPV_garden_public_school"),
+                   new_names = c("NPV public school garden"),
                                     method = "boxplot_density", 
                                     base_size = 7)
 
 dist_plot_NPV_garden_STEM_public <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_STEM_public_school",
+         old_names = c("NPV_garden_STEM_public_school"),
+                   new_names = c("NPV public school garden with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7)
 
@@ -249,12 +282,16 @@ NPV for private schools
 dist_plot_NPV_garden <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden",
+         old_names = c("NPV_garden"),
+                   new_names = c("NPV private school garden"),
                                     method = "boxplot_density", 
                                     base_size = 7)
 
 dist_plot_NPV_garden_STEM <- plot_distributions(
   mcSimulation_object = garden_simulation_results, 
                                     vars = "NPV_garden_STEM",
+         old_names = c("NPV_garden_STEM"),
+                   new_names = c("NPV private school with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7)
 
@@ -273,7 +310,6 @@ PLS for private schools
 
 ```{r pls_private}
 plot_pls_garden / plot_evpi_garden 
-
 ```
 
 EVPI for private schools 
@@ -331,6 +367,19 @@ ggplotly(public_pareto)
 # plot <- ggplotly(public_pareto) 
 # saveWidget(plot, "my_plot.html", selfcontained = TRUE)
 
+```
+
+```{r plotly_static_public}
+
+public_pareto %>% 
+  config(
+    toImageButtonOptions = list(
+      format = "png",
+      filename = "myplot",
+      width = 600,
+      height = 700
+    )
+  )
 ```
 
 # Input data for the simulations 
