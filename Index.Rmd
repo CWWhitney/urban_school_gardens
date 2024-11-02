@@ -7,8 +7,11 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+               out.width = "75%", 
+               fig.align = "center")
 
+library(akima)
 library(decisionSupport)
 library(ggstance)
 library(gtExtras)
@@ -168,7 +171,7 @@ source("functions/multi_EVPI.R")
 
 ```
 
-Generate the plot for EVPI PLS and cashflows for public and private schools
+Generate the plots for EVPI PLS and cashflows for public and private schools
 
 ```{r plot-evpi-NPV_garden}
 #Value of information the garden intervention decision
@@ -257,6 +260,7 @@ library(patchwork)
 
 dist_plot_NPV_garden_public / dist_plot_NPV_garden_STEM_public 
 ```
+
 PLS for public schools 
 
 ```{r pls_public}
@@ -340,10 +344,21 @@ private_pareto <- pareto_front(
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
   child_health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity
+  biodiversity_STEM = garden_simulation_results$y$biodiversity, 
+  plot_return = "scatter" 
 )
 
 ggplotly(private_pareto) 
+
+```
+
+<!-- ![](figures/private_pareto_scatter.png) ![](figures/private_pareto_surface.png) -->
+
+```{r image_grobs_pareto_private, fig.show = "hold", out.width = "50%", fig.align = "default"}
+
+knitr::include_graphics("figures/private_pareto_scatter.png")
+
+knitr::include_graphics("figures/private_pareto_surface.png")
 
 ```
 
@@ -357,29 +372,23 @@ public_pareto <- pareto_front(
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
   child_health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity
+  biodiversity_STEM = garden_simulation_results$y$biodiversity, 
+   plot_return = "scatter" 
 )
 
 
 ggplotly(public_pareto) 
-# option for interactive html 
-# library(htmlwidgets)
-# plot <- ggplotly(public_pareto) 
-# saveWidget(plot, "my_plot.html", selfcontained = TRUE)
 
 ```
 
-```{r plotly_static_public}
+ <!-- ![](figures/public_pareto_scatter.png) ![](figures/public_pareto_surface.png) -->
 
-public_pareto %>% 
-  config(
-    toImageButtonOptions = list(
-      format = "png",
-      filename = "myplot",
-      width = 600,
-      height = 700
-    )
-  )
+```{r image_grobs_pareto_public, fig.show = "hold", out.width = "50%", fig.align = "default"}
+
+knitr::include_graphics("figures/public_pareto_scatter.png")
+
+knitr::include_graphics("figures/public_pareto_surface.png")
+
 ```
 
 # Input data for the simulations 
