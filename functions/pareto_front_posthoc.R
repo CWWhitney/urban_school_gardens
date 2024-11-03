@@ -2,7 +2,7 @@
 #'
 #' This function identifies Pareto-optimal points for two decision options (STEM and Garden) 
 #' based on three objectives: economic return, child health, and biodiversity. It provides 
-#' summary statistics, a count of Pareto-optimal points, and a comparative plot visualizing 
+#' summary statistics, a count of Pareto-optimal points, and comparisons of
 #' trade-offs among the objectives for each option.
 #'
 #' @param economic_return_garden Numeric vector. Economic return values for the Garden option.
@@ -15,13 +15,10 @@
 #' @return A list with the following elements:
 #'   \item{stem_summary}{Summary statistics of the Pareto-optimal points for the STEM option.}
 #'   \item{garden_summary}{Summary statistics of the Pareto-optimal points for the Garden option.}
-#'   \item{trade_off_plot}{A `ggplot2` object showing the trade-offs between biodiversity and 
-#'     child health, with economic return as the color scale, faceted by decision option (STEM or Garden).}
 #'
 #' @details The function first identifies Pareto-optimal points for each option by maximizing 
 #' all three objectives (economic return, child health, and biodiversity) using the `rPref` package. 
-#' It then calculates summary statistics for each option's Pareto-optimal points and plots the 
-#' trade-offs among objectives to aid interpretation.
+#' It then calculates summary statistics for each option's Pareto-optimal points.
 #'
 #' @examples
 #' \dontrun{
@@ -30,7 +27,6 @@
 #' }
 #'
 #' @import rPref
-#' @import ggplot2
 #' @import reshape2
 #' @export
 pareto_front_posthoc <- function(economic_return_garden, child_health_garden, biodiversity_garden, 
@@ -64,50 +60,23 @@ pareto_front_posthoc <- function(economic_return_garden, child_health_garden, bi
   stem_summary <- summary(pareto_front_stem)
   garden_summary <- summary(pareto_front_garden)
   
+  # Count of Pareto-optimal points
+  num_pareto_stem <- nrow(pareto_front_stem)
+  num_pareto_garden <- nrow(pareto_front_garden)
+  
   # Print out details for interpretation
-  cat("Number of Pareto-optimal points for STEM option:", nrow(pareto_front_stem), "\n")
-  cat("Number of Pareto-optimal points for Garden option:", nrow(pareto_front_garden), "\n\n")
+  cat("Number of Pareto-optimal points for STEM option:", num_pareto_stem, "\n")
+  cat("Number of Pareto-optimal points for Garden option:", num_pareto_garden, "\n\n")
   cat("Summary of Pareto-optimal points for STEM option:\n")
   print(stem_summary)
   cat("\nSummary of Pareto-optimal points for Garden option:\n")
   print(garden_summary)
   
-  library(ggplot2)
-  library(reshape2)
-  
-  # Melt data for easier plotting
-  stem_long <- melt(pareto_front_stem, variable.name = "Objective")
-  garden_long <- melt(pareto_front_garden, variable.name = "Objective")
-  
-  # Add a label for the option type
-  stem_long$Option <- "STEM"
-  garden_long$Option <- "Garden"
-  
-  # Combine data for a comparative plot
-  combined_data <- rbind(stem_long, garden_long)
-  
-  # Reshape combined_data back to wide format
-  combined_data_wide <- dcast(combined_data, Option ~ Objective, value.var = "value")
-  
-  # Create the plot
-  trade_off_plot <- ggplot(combined_data_wide, aes(x = biodiversity, y = child_health, color = economic_return)) +
-    geom_point() +
-    facet_wrap(~ Option) +
-    labs(
-      title = "Trade-offs in Pareto-Optimal Points",
-      x = "Biodiversity",
-      y = "Child Health",
-      color = "Economic Return"
-    ) +
-    theme_minimal()
-  
-  # Display the plot
-  trade_off_plot
-  
   # Return a list of outputs
   return(list(
+    num_pareto_stem = num_pareto_stem,
+    num_pareto_garden = num_pareto_garden,
     stem_summary = stem_summary,
-    garden_summary = garden_summary,
-    trade_off_plot = trade_off_plot
+    garden_summary = garden_summary
   ))
 }
