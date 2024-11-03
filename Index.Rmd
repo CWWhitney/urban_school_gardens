@@ -362,6 +362,23 @@ knitr::include_graphics("figures/private_pareto_surface.png")
 
 ```
 
+Trade offs for private school pareto 
+
+```{r pareto_front_posthoc_private}
+
+source("functions/pareto_front_posthoc.R")
+private_pareto_posthoc <- pareto_front_posthoc(
+  economic_return_garden = garden_simulation_results$y$NPV_garden,
+  child_health_garden = garden_simulation_results$y$health,
+  biodiversity_garden = garden_simulation_results$y$biodiversity,
+  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
+  child_health_STEM = garden_simulation_results$y$health_STEM,
+  biodiversity_STEM = garden_simulation_results$y$biodiversity 
+)
+private_pareto_posthoc
+
+```
+
 ## Public schools pareto front
 
 ```{r pareto_front_public}
@@ -376,11 +393,11 @@ public_pareto <- pareto_front(
    plot_return = "scatter" 
 )
 
-
 ggplotly(public_pareto) 
 
 ```
 
+<!-- copy and store locally for hosted page -->
  <!-- ![](figures/public_pareto_scatter.png) ![](figures/public_pareto_surface.png) -->
 
 ```{r image_grobs_pareto_public, fig.show = "hold", out.width = "50%", fig.align = "default"}
@@ -388,6 +405,23 @@ ggplotly(public_pareto)
 knitr::include_graphics("figures/public_pareto_scatter.png")
 
 knitr::include_graphics("figures/public_pareto_surface.png")
+
+```
+
+Trade offs for public school pareto 
+
+```{r pareto_front_posthoc_public}
+
+source("functions/pareto_front_posthoc.R")
+public_pareto_posthoc <- pareto_front_posthoc(
+  economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
+  child_health_garden = garden_simulation_results$y$health,
+  biodiversity_garden = garden_simulation_results$y$biodiversity,
+  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
+  child_health_STEM = garden_simulation_results$y$health_STEM,
+  biodiversity_STEM = garden_simulation_results$y$biodiversity
+)
+public_pareto_posthoc
 
 ```
 
