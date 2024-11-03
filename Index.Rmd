@@ -379,6 +379,38 @@ private_pareto_posthoc
 
 ```
 
+**From 10,000 Monte Carlo simulations, we determined the Pareto-optimal points for the STEM and Garden options for private schools.**
+
+For private schools, the Garden option has more Pareto-optimal points (66) than the STEM option (47). This suggests that the Garden option offers a wider range of trade-offs, meaning there are more diverse configurations where it efficiently balances economic return, biodiversity, and child health. In contrast, the STEM option has fewer Pareto-optimal points, indicating more specific or constrained trade-offs among the objectives.
+
+**STEM Option in Private Schools**
+
+Economic Return: The economic return for the STEM option ranges from -576.6 to 10,218.6 (Median: 2178.2, Mean: 2883.6), with potential negative returns (losses) and high positive returns up to 10,218.6. The median and mean are close, indicating a relatively balanced distribution with both high and low values.
+
+Biodiversity: Biodiversity outcomes range from 718.5 to 5452.9 (Median: 1867.4, Mean: 2212.3). A high maximum biodiversity score suggests that the STEM option may achieve strong biodiversity outcomes in some configurations, though the median indicates that most solutions lie in a more moderate range.
+
+Child Health: Child health outcomes range from 7.671 to 64.952 (Median: 31.754, Mean: 31.578). With the median close to the mean, the child health distribution is symmetric, indicating balanced outcomes across configurations.
+
+**Garden Option in Private Schools**
+
+Economic Return: The Garden option shows a wide economic return range, from -2564.8 to 10,175.3 (Median: 2264.2, Mean: 2536.1). Like the STEM option, it has potential for high returns but also includes configurations with substantial losses. The proximity of the mean and median suggests a symmetric distribution of returns.
+
+Biodiversity: Biodiversity values in the Garden option range from 402.6 to 3775.8 (Median: 1533.7, Mean: 1623.1). The Garden option achieves generally lower maximum biodiversity than the STEM option, although the median value indicates consistent, moderate biodiversity levels across configurations.
+
+Child Health: Child health scores range from 7.671 to 64.952, with a median of 26.716 and a mean of 28.389. Similar to the STEM option, the distribution is fairly symmetric, suggesting balanced child health outcomes.
+
+**Key Insights**
+
+Higher Maximum Economic Returns in STEM: The STEM option reaches a slightly higher maximum economic return (10,218.6 vs. 10,175.3), though both options show potential for significant positive returns. Both options also include configurations with negative returns, highlighting the importance of careful selection to avoid losses.
+
+Biodiversity Potential: The STEM option achieves a higher maximum biodiversity score (5452.9 vs. 3775.8), suggesting that, in its best configurations, it may be better suited for maximizing biodiversity outcomes compared to the Garden option.
+
+Symmetry in Child Health Outcomes: Both options exhibit similar distributions in child health, with symmetric outcomes centered around moderate values, indicating relatively balanced trade-offs in this objective.
+
+**Overall Conclusion**
+
+In private schools, both STEM and Garden options offer configurations that can achieve high economic returns and biodiversity, though the STEM option may provide higher maximum biodiversity and economic outcomes. The Garden option’s performance, with more moderate values, may represent more stable trade-offs among the objectives. This comparison highlights the need to prioritize objectives based on specific goals within private school settings.
+
 ## Public schools pareto front
 
 ```{r pareto_front_public}
@@ -408,7 +440,7 @@ knitr::include_graphics("figures/public_pareto_surface.png")
 
 ```
 
-Trade offs for public school pareto 
+Pareto-optimal points for public school options
 
 ```{r pareto_front_posthoc_public}
 
@@ -424,6 +456,37 @@ public_pareto_posthoc <- pareto_front_posthoc(
 public_pareto_posthoc
 
 ```
+
+**From 10,000 Monte Carlo simulations, we determined the Pareto-optimal points for the STEM and Garden options in public schools.**
+
+For public schools, the Garden option also has more Pareto-optimal points (71) than the STEM option (56). This also suggests that the Garden option offers a wider range of trade-offs, meaning there are more diverse configurations where it efficiently balances economic return, biodiversity, and child health. 
+
+**STEM Option in Public Schools**
+
+Economic Return: The economic return values for the STEM option vary significantly, ranging from -576.6 to 7138.2 (Median: 2839.3, Mean: 2978.7). The distribution includes both negative returns (indicating potential losses) and a high positive return of 7138.2. The proximity of the median and mean suggests a balanced distribution with both high and low values.
+
+Biodiversity: Biodiversity outcomes for the STEM option also show a wide range, from 0 to 5453 (Median: 1469, Mean: 1823). The median value indicates that half of the Pareto-optimal points fall below 1469, while the high maximum value highlights configurations with very high biodiversity outcomes.
+
+Child Health: Child health scores for STEM range from 0 to 64.95 (Median: 27.83, Mean: 28.17). With the median close to the mean, the distribution appears symmetric around these central values, suggesting balanced trade-offs in child health outcomes.
+Garden Option in Public Schools
+
+**Garden Option in Public Schools**
+
+Economic Return: Economic return for the Garden option varies widely as well, with values ranging from large negative returns (losses) to a maximum of 6583.17 (Median: 2078.6, Mean: 2151.91). The proximity of the mean and median indicates a symmetric distribution with both high and low values.
+
+Biodiversity: Biodiversity outcomes in the Garden option range from a minimum of 151.4 to a maximum of 3775.8, with a median of 1404.3. While the Garden option includes configurations with relatively high biodiversity outcomes, it generally achieves lower maximum biodiversity than the STEM option.
+
+Child Health: Child health scores for the Garden option range from 7.671 to 64.952, with a median of 24.732. Like the STEM option, the child health distribution is roughly symmetric around the mean, and the values are similar between both options.
+
+**Key Insights**
+
+Wider Range of Pareto-Optimal Solutions in the Garden Option: The greater number of Pareto-optimal points in the Garden option indicates more flexibility and a broader range of configurations that efficiently balance economic return, biodiversity, and child health.
+
+Higher Maximum Biodiversity in STEM: The STEM option reaches a much higher maximum biodiversity score (5453 vs. 3775.8), suggesting that it may achieve greater biodiversity outcomes in its best configurations.
+
+Variability in Economic Returns: Both options exhibit considerable variability in economic returns, including both positive and negative values. The STEM option has a slightly higher maximum economic return (7138.2), which could be relevant if economic outcomes are prioritized.
+
+For public schools the Garden option offers more flexibility in balancing economic return, biodiversity, and child health, suggesting it may be more adaptable to varied priorities within public school contexts. This range of solutions allows decision-makers to select from a broader set of efficient trade-offs that align with different objectives. In contrast, the STEM option presents fewer, more specific trade-offs, but it stands out with its potential for higher maximum outcomes in both economic return and biodiversity. This makes the STEM option particularly suitable for scenarios where high biodiversity or economic outcomes are prioritized, even if the range of balanced configurations is somewhat narrower. 
 
 # Input data for the simulations 
 
