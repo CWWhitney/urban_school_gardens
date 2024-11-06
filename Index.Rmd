@@ -183,11 +183,18 @@ pls_result <- pls_model(object = garden_simulation_results,
 # read in the common input table
 input_table <- read.csv("data/inputs_school_garden.csv")
 
+label_private_school <- "Private school"
+
 # source the plot function
 source("functions/plot_pls.R")
+
 plot_pls_garden <- plot_pls(plsrResults = pls_result, 
                             input_table = input_table, 
-                            threshold = 0.9)
+                            threshold = 0.9) + 
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank()) + scale_x_continuous(limits = c(0, 7)) + ggtitle(label_private_school) + 
+  annotate(geom="text", x=5, y=1, label="Garden")
 
 #For school garden with formal STEM education
 pls_result_STEM <- pls_model(object = garden_simulation_results,
@@ -196,7 +203,9 @@ pls_result_STEM <- pls_model(object = garden_simulation_results,
 
 plot_pls_STEM <- plot_pls(plsrResults = pls_result_STEM, 
                           input_table = input_table, 
-                          threshold = 0.9)
+                          threshold = 0.9) + 
+  scale_x_continuous(limits = c(0, 7)) + 
+  annotate(geom="text", x=5, y=1, label="STEM garden")
 
 plot_pls_garden / plot_pls_STEM 
 ```
@@ -215,10 +224,17 @@ pls_result_garden_public <- pls_model(object = garden_simulation_results,
 # read in the common input table
 input_table <- read.csv("data/inputs_school_garden.csv")
 
+label_public_school <- "Public school"
+
 # source the plot function
 source("functions/plot_pls.R")
 plot_pls_garden_public <- plot_pls(pls_result_garden_public, 
-                            input_table = input_table, threshold = 0.9)
+                            input_table = input_table, threshold = 0.9) +
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank()) + 
+  scale_x_continuous(limits = c(0, 7)) + ggtitle(label_public_school) + 
+  annotate(geom="text", x=5, y=1, label="Garden")
 
 #For school garden with formal STEM education
 pls_result_STEM_public <- pls_model(object = garden_simulation_results,
@@ -227,9 +243,26 @@ pls_result_STEM_public <- pls_model(object = garden_simulation_results,
                                 ncomp = 1)
 
 plot_pls_public_STEM <- plot_pls(pls_result_STEM_public, 
-                                 input_table = input_table, threshold = 0.9)
+                                 input_table = input_table, threshold = 0.9) + scale_x_continuous(limits = c(0, 7)) + 
+  annotate(geom="text", x=5, y=1, label="STEM garden")
 
-plot_pls_garden_public / plot_pls_public_STEM
+plot_pls_garden_public / plot_pls_public_STEM 
+```
+<!-- Exclude the specific PLS figure generation from supplementary but keep teh general build up of the figure -->
+
+```{r save_pls, include = FALSE}
+
+# Generate figure
+# private and public schools VIP
+public_pls <- plot_pls_garden / plot_pls_STEM + theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())  # for the main title
+
+public_pls /
+plot_pls_garden_public / plot_pls_public_STEM + plot_layout(heights = c(3, 4, 5, 4))
+
+ggsave("figures/Fig_7_VIP.png", width=8, height=6) 
+
 ```
 
 # Value of Information
@@ -263,13 +296,23 @@ EVPI for private schools:
 ```{r evpi_private}
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
-plot_evpi_garden <- plot_evpi(evpi, decision_vars = "NPV_garden")
+plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
+                              decision_vars = "NPV_garden", 
+                              new_names = "Garden",
+                            input_table = input_table) +
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank()) + 
+  scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school) 
 
 # Value of information for the garden option with formal STEM education.
 # using the results of the same multi_EVPI
-plot_evpi_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM")
+plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
+                            decision_vars = "NPV_garden_STEM", 
+                            new_names = "STEM garden",
+                            input_table = input_table)+ scale_x_continuous(limits = c(0, 210)) 
 
-plot_evpi_STEM / plot_evpi_garden 
+ plot_evpi_garden / plot_evpi_STEM
 ```
 
 EVPI for public schools:
@@ -279,15 +322,43 @@ EVPI for public schools:
 # Value of information for the public school garden option with no formal STEM education.
 
 # using the results of the same multi_EVPI
-plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school")
+plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school", 
+                            new_names = "Garden", 
+                            input_table = input_table) +
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank()) + 
+  scale_x_continuous(limits = c(0, 210)) + ggtitle(label_public_school) #210
+
 
 # Value of information for the public school garden option with formal STEM education.
 # using the results of the same multi_EVPI
-plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school")
+plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school", 
+                            new_names = "STEM garden",
+                            input_table = input_table) + 
+  scale_x_continuous(limits = c(0, 210))  #210
 
-plot_evpi_public_STEM / plot_evpi_public 
+plot_evpi_public / plot_evpi_public_STEM
 
 ```
+
+<!-- Exclude the specific EVPI figure generation from supplementary but keep teh general build up of the figure -->
+
+```{r save_evpi, include = FALSE}
+
+# Generate figure
+# private and public schools EVPI
+public_evpi_together <- plot_evpi_garden / plot_evpi_STEM + 
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())  
+
+public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(heights = c(0.7, 2.5, 2, 8))
+
+ggsave("figures/Fig_8_EVPI.png", width=9, height=13) 
+
+```
+
 
 ## Cash flows
 
@@ -299,20 +370,32 @@ Cash flow plots of the garden option without formal STEM education. These are th
 
 source("functions/plot_cashflow.R")
 plot_cashflow_garden <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
-              cashflow_var_name = "Cashflow_garden") 
+              cashflow_var_name = "Cashflow_garden", 
+              facet_labels = "Garden") + 
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())  
 
 # Cashflow of the garden option with formal STEM education
 source("functions/plot_cashflow.R")
 plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
-              cashflow_var_name = "Cashflow_garden_STEM")
+              cashflow_var_name = "Cashflow_garden_STEM", 
+              facet_labels = "STEM Garden")
 
-plot_cashflow_garden / plot_cashflow_STEM
+plot_cashflow_garden / plot_cashflow_STEM 
+
+ggsave("figures/Fig_9_cashflow.png", width=5, height=5) 
+
 ```
 
 # Pareto front
 
 These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
 
+```{r controll_variables}
+
+
+```
 ## Private schools pareto front
 
 ```{r pareto_front_private}
