@@ -2,10 +2,8 @@
 
 input_table <- read.csv("data/inputs_school_garden.csv")
 
-garden_simulation_data <- cbind(garden_simulation_results$x, garden_simulation_results$y)
-
 # Separate the variable names based on status
-uncertain_vars <- variable_list$variable[variable_list$status == "uncertain"]
+uncertain_vars <- input_table$variable[input_table$control_status == "uncertain"]
 
 # Additional uncertain variables from garden_simulation_results$y
 additional_uncertain_vars <- c("NPV_garden", "NPV_garden_STEM", 
@@ -15,14 +13,15 @@ additional_uncertain_vars <- c("NPV_garden", "NPV_garden_STEM",
 
 # Combine both lists to get the final list of uncertain variables
 uncertain_vars <- c(uncertain_vars, additional_uncertain_vars)
- 
-controllable_vars <- variable_list$variable[variable_list$status == "controllable"]
+
+# import from index run of MC model
+garden_simulation_data <- cbind(garden_simulation_results$x, garden_simulation_results$y)
+
+controllable_vars <- input_table$variable[input_table$control_status == "controllable"]
 
 # Filter the Monte Carlo results based on these categories
 uncertain_data <- garden_simulation_data[, uncertain_vars]
 controllable_data <- garden_simulation_data[, controllable_vars]
-
-
 
 # Calculate Expected Values for Uncertain Variables
 # For the uncertain variables, calculate the expected value across all simulations 
@@ -158,3 +157,59 @@ plot_scatter <- plot_ly(
   )
 
 plot_scatter
+
+# Plot two together ######
+
+# STEM ####
+# STEM Define the Pareto criteria to maximize biodiversity, health, and NPV_garden
+pareto_criteria_STEM <- high(expanded_scenarios$biodiversity) * 
+  high(expanded_scenarios$health_STEM) * 
+  high(expanded_scenarios$NPV_garden_STEM)
+
+# STEM Compute the Pareto front for the expanded scenarios
+pareto_front_STEM <- psel(expanded_scenarios, pareto_criteria_STEM)
+
+# Garden ####
+# Garden Define the Pareto criteria to maximize biodiversity, health, and NPV_garden
+pareto_criteria_garden <- high(expanded_scenarios$biodiversity) * 
+  high(expanded_scenarios$health) * 
+  high(expanded_scenarios$NPV_garden)
+
+# Garden Compute the Pareto front for the expanded scenarios
+pareto_front_garden <- psel(expanded_scenarios, pareto_criteria_garden)
+
+
+# Create a 3D scatter plot for the Pareto front
+# if (plot_return == "scatter") {
+  plot_scatter <- plot_ly(
+    data = pareto_front_STEM,
+    x = ~biodiversity,
+    y = ~health_STEM,
+    z = ~NPV_garden_STEM,
+    type = 'scatter3d',
+    mode = 'markers',
+    marker = list(size = 3, color = 'blue'),
+    name = 'STEM Option Pareto Front'
+  ) %>%
+    add_trace(
+      data = pareto_front_garden,
+      x = ~biodiversity,
+      y = ~health,
+      z = ~NPV_garden,
+      type = 'scatter3d',
+      mode = 'markers',
+      marker = list(size = 3, color = 'red'),
+      name = 'Garden Option Pareto Front'
+    ) %>%
+    layout(
+      title = "Comparison of Pareto Fronts: STEM vs Garden Option",
+      scene = list(
+        xaxis = list(title = "Biodiversity"),
+        yaxis = list(title = "Child Health"),
+        zaxis = list(title = "Economic Return")
+      )
+    )
+#   return(plot_scatter)
+# }
+
+
