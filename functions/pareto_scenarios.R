@@ -2,8 +2,8 @@
 
 input_table <- read.csv("data/inputs_school_garden.csv")
 
-# Separate the variable names based on status
-uncertain_vars <- input_table$variable[input_table$control_status == "uncertain"]
+# initial - separate the variable names based on status from input table
+uncertain_vars_init <- input_table$variable[input_table$control_status == "uncertain"]
 
 # Additional uncertain variables from garden_simulation_results$y
 additional_uncertain_vars <- c("NPV_garden", "NPV_garden_STEM", 
@@ -12,7 +12,7 @@ additional_uncertain_vars <- c("NPV_garden", "NPV_garden_STEM",
                                "total_costs", "total_costs_STEM")
 
 # Combine both lists to get the final list of uncertain variables
-uncertain_vars <- c(uncertain_vars, additional_uncertain_vars)
+uncertain_vars <- c(uncertain_vars_init, additional_uncertain_vars)
 
 # import from index run of MC model
 garden_simulation_data <- cbind(garden_simulation_results$x, garden_simulation_results$y)
@@ -36,7 +36,7 @@ expected_values_uncertain <- colMeans(uncertain_data)
 # Example: Generating two scenarios for controllable variables
 scenario_1 <- as.list(expected_values_uncertain)
 scenario_1$if_animals_in_garden <- 1
-scenario_1$size_of_garden <- 500
+scenario_1$size_of_garden <- 180
 
 scenario_2 <- as.list(expected_values_uncertain)
 scenario_2$if_animals_in_garden <- 0
@@ -64,7 +64,7 @@ scenarios <- data.frame(lapply(scenarios, function(x) {
   }
 }))
 
-# Plot single scenario example ####
+# Plot three scenario example ####
 
 # Define the objectives to maximize (e.g., biodiversity, child health, economic return)
 pareto_criteria <- high(scenarios$biodiversity) * high(scenarios$health) * high(scenarios$NPV_garden)
@@ -93,7 +93,7 @@ plot_scatter <- plot_ly(
 
 plot_scatter
 
-### Multiple options ####
+### Multiple controllable options ####
 
 # Load necessary library
 library(rPref)
@@ -110,6 +110,7 @@ controllable_options <- list(
   "size_of_garden" = quantile(garden_simulation_data$size_of_garden, probs = c(0.1, 0.5, 0.9)),
   "annual_teacher_training" = quantile(garden_simulation_data$annual_teacher_training, probs = c(0.1, 0.5, 0.9))
 )
+
 
 # Generate all possible combinations of controllable variables
 scenarios_grid <- expand.grid(controllable_options)
@@ -178,9 +179,8 @@ pareto_criteria_garden <- high(expanded_scenarios$biodiversity) *
 # Garden Compute the Pareto front for the expanded scenarios
 pareto_front_garden <- psel(expanded_scenarios, pareto_criteria_garden)
 
-
 # Create a 3D scatter plot for the Pareto front
-# if (plot_return == "scatter") {
+
   plot_scatter <- plot_ly(
     data = pareto_front_STEM,
     x = ~biodiversity,
@@ -209,7 +209,47 @@ pareto_front_garden <- psel(expanded_scenarios, pareto_criteria_garden)
         zaxis = list(title = "Economic Return")
       )
     )
-#   return(plot_scatter)
-# }
 
+  # plot_surface + plot_scatter ####
+  
+  source("functions/plot_pareto.R")
+  plot_scatter <- plot_pareto(
+    economic_return_garden = garden_simulation_results$y$NPV_garden,
+    health_garden = garden_simulation_results$y$health,
+    biodiversity_garden = garden_simulation_results$y$biodiversity,
+    economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
+    health_STEM = garden_simulation_results$y$health_STEM,
+    biodiversity_STEM = garden_simulation_results$y$biodiversity, 
+    plot_return = "scatter"
+  )
+  # rename for plot STEM
+  pareto_front_STEM$health <- pareto_front_STEM$health_STEM
+  pareto_front_STEM$economic_return <- pareto_front_STEM$NPV_garden_STEM
+  
+  # rename for plot garden
+  pareto_front_garden$health <- pareto_front_garden$health
+  pareto_front_garden$economic_return <- pareto_front_garden$NPV_garden
+  
+  plot_scatter %>% 
+    add_trace(
+    x = ~pareto_front_STEM$biodiversity[1],
+    y = ~pareto_front_STEM$health[1],
+    z = ~pareto_front_STEM$economic_return[1],
+    type = 'scatter3d',
+    mode = 'markers',
+    marker = list(size = 6, color = 'blue', symbol = I("triangle-up")),
+    name = 'STEM controllable option Pareto Front'
+  ) %>%
+    add_trace(
+      x = ~pareto_front_garden$biodiversity[1],
+      y = ~pareto_front_garden$health[1],
+      z = ~pareto_front_garden$economic_return[1],
+      type = 'scatter3d',
+      mode = 'markers',
+      marker = list(size = 6, color = 'red', symbol = I("triangle-up")),
+      name = 'Garden controllable option Pareto Front'
+    ) 
+  
 
+  # Ultimately, to work, this would require a rebuild of the original model for 
+  # each controllable scenario (many model iterations)
