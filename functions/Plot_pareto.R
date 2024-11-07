@@ -14,10 +14,10 @@ library(rPref)
 #' The function returns either a 3D scatter plot or a 3D surface plot, depending on the input.
 #'
 #' @param economic_return_garden Numeric vector. Economic return values for the Garden option.
-#' @param child_health_garden Numeric vector. Child health values for the Garden option.
+#' @param health_garden Numeric vector. Child health values for the Garden option.
 #' @param biodiversity_garden Numeric vector. Biodiversity values for the Garden option.
 #' @param economic_return_STEM Numeric vector. Economic return values for the STEM option.
-#' @param child_health_STEM Numeric vector. Child health values for the STEM option.
+#' @param health_STEM Numeric vector. Child health values for the STEM option.
 #' @param biodiversity_STEM Numeric vector. Biodiversity values for the STEM option.
 #' @param plot_return Character string. Specifies the type of plot to return:
 #'   - `"scatter"`: Returns a 3D scatter plot of the Pareto-optimal points.
@@ -36,11 +36,11 @@ library(rPref)
 #'
 #' @examples
 #' \dontrun{
-#' pareto_front(economic_return_garden, child_health_garden, biodiversity_garden, 
-#'              economic_return_STEM, child_health_STEM, biodiversity_STEM, plot_return = "scatter")
+#' pareto_front(economic_return_garden, health_garden, biodiversity_garden, 
+#'              economic_return_STEM, health_STEM, biodiversity_STEM, plot_return = "scatter")
 #'
-#' pareto_front(economic_return_garden, child_health_garden, biodiversity_garden, 
-#'              economic_return_STEM, child_health_STEM, biodiversity_STEM, plot_return = "surface")
+#' pareto_front(economic_return_garden, health_garden, biodiversity_garden, 
+#'              economic_return_STEM, health_STEM, biodiversity_STEM, plot_return = "surface")
 #' }
 #'
 #' @import rPref
@@ -48,24 +48,24 @@ library(rPref)
 #' @import akima
 #' @export
 
-pareto_front <- function(economic_return_garden, child_health_garden, biodiversity_garden, 
-                         economic_return_STEM, child_health_STEM, biodiversity_STEM, plot_return = "scatter") {
+plot_pareto <- function(economic_return_garden, health_garden, biodiversity_garden, 
+                         economic_return_STEM, health_STEM, biodiversity_STEM, plot_return = "scatter") {
   
   # Combine into data frames for each option stem_garden_data has three columns
-  # (economic_return, biodiversity, and child_health) with values representing
+  # (economic_return, biodiversity, and health) with values representing
   # the STEM option’s Each row in stem_garden_data is a possible solution or
   # outcome, with values for the three objectives.
   
   stem_garden_data <- data.frame(
     economic_return = economic_return_garden,
-    biodiversity = child_health_garden,
-    child_health = biodiversity_garden
+    biodiversity = health_garden,
+    health = biodiversity_garden
   )
   
   garden_data <- data.frame(
     economic_return = economic_return_STEM,
-    biodiversity = child_health_STEM,
-    child_health = biodiversity_STEM
+    biodiversity = health_STEM,
+    health = biodiversity_STEM
   )
   
   # Find Pareto-optimal points for each option
@@ -77,7 +77,7 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
   # stem_garden_data that maximize all three objectives simultaneously.
   
   p_stem <- rPref::high(stem_garden_data$biodiversity) * 
-    rPref::high(stem_garden_data$child_health) * 
+    rPref::high(stem_garden_data$health) * 
     rPref::high(stem_garden_data$economic_return)
   
   # Selecting Pareto-Optimal Points with psel():
@@ -100,7 +100,7 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
   pareto_front_stem <- rPref::psel(stem_garden_data, p_stem)
   
   #same for garden
-  p_garden <- high(garden_data$biodiversity) * high(garden_data$child_health) * high(garden_data$economic_return)
+  p_garden <- high(garden_data$biodiversity) * high(garden_data$health) * high(garden_data$economic_return)
   
   pareto_front_garden <- psel(garden_data, p_garden)
   
@@ -109,7 +109,7 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
     plot_scatter <- plot_ly(
       pareto_front_stem,
       x = ~biodiversity,
-      y = ~child_health,
+      y = ~health,
       z = ~economic_return,
       type = 'scatter3d',
       mode = 'markers',
@@ -119,7 +119,7 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
       add_trace(
         data = pareto_front_garden,
         x = ~biodiversity,
-        y = ~child_health,
+        y = ~health,
         z = ~economic_return,
         type = 'scatter3d',
         mode = 'markers',
@@ -134,23 +134,24 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
           zaxis = list(title = "Economic Return")
         )
       )
+    
     return(plot_scatter)
-  }
+    }
   
   # Create a 3D surface plot for the Pareto front
   if (plot_return == "surface") {
     # Interpolate the surface for both options
-    interp_stem <- with(pareto_front_stem, interp(x = biodiversity, y = child_health, z = economic_return, 
+    interp_stem <- with(pareto_front_stem, interp(x = biodiversity, y = health, z = economic_return, 
                                                   duplicate = "mean"))
-    interp_garden <- with(pareto_front_garden, interp(x = biodiversity, y = child_health, z = economic_return, 
+    interp_garden <- with(pareto_front_garden, interp(x = biodiversity, y = health, z = economic_return, 
                                                       duplicate = "mean"))
     
     plot_surface <- plot_ly() %>%
       add_surface(x = interp_stem$x, y = interp_stem$y, z = interp_stem$z, 
-                  colorscale = list(c(0, 'blue'), c(1, 'blue')),  # STEM option in red
+                  colorscale = list(c(0, 'blue'), c(1, 'blue')),  # STEM option in blue
                   opacity = 0.7, name = 'STEM Option', showscale = FALSE) %>%
       add_surface(x = interp_garden$x, y = interp_garden$y, z = interp_garden$z, 
-                  colorscale = list(c(0, 'red'), c(1, 'red')),  # Garden option in blue
+                  colorscale = list(c(0, 'red'), c(1, 'red')),  # Garden option in red
                   opacity = 0.7, name = 'Garden Option', showscale = FALSE) %>%
       layout(
         scene = list(
@@ -159,7 +160,8 @@ pareto_front <- function(economic_return_garden, child_health_garden, biodiversi
           zaxis = list(title = "Economic Return")
         )
       )
-    return(plot_surface)
+  
+      return(plot_surface)
   }
   
   # Error message if an incorrect plot_return argument is provided
