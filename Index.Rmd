@@ -396,16 +396,17 @@ These figures display the Pareto-optimal solutions, representing the best trade-
 
 
 ```
+
 ## Private schools pareto front
 
-```{r pareto_front_private}
+```{r plot_pareto_private}
 source("functions/plot_pareto.R")
-private_pareto <- pareto_front(
+private_pareto <- plot_pareto(
   economic_return_garden = garden_simulation_results$y$NPV_garden,
-  child_health_garden = garden_simulation_results$y$health,
+  health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
-  child_health_STEM = garden_simulation_results$y$health_STEM,
+  health_STEM = garden_simulation_results$y$health_STEM,
   biodiversity_STEM = garden_simulation_results$y$biodiversity, 
   plot_return = "scatter" 
 )
@@ -426,15 +427,15 @@ knitr::include_graphics("figures/private_pareto_surface.png")
 
 Trade offs for private school pareto:
 
-```{r pareto_front_posthoc_private}
+```{r pareto_posthoc_private}
 
-source("functions/pareto_front_posthoc.R")
-private_pareto_posthoc <- pareto_front_posthoc(
+source("functions/pareto_posthoc.R")
+private_pareto_posthoc <- pareto_posthoc(
   economic_return_garden = garden_simulation_results$y$NPV_garden,
-  child_health_garden = garden_simulation_results$y$health,
+  health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
-  child_health_STEM = garden_simulation_results$y$health_STEM,
+  health_STEM = garden_simulation_results$y$health_STEM,
   biodiversity_STEM = garden_simulation_results$y$biodiversity 
 )
 private_pareto_posthoc
@@ -443,14 +444,14 @@ private_pareto_posthoc
 
 ## Public schools pareto front
 
-```{r pareto_front_public}
+```{r plot_pareto_public}
 source("functions/plot_pareto.R")
-public_pareto <- pareto_front(
+public_pareto <- plot_pareto(
   economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
-  child_health_garden = garden_simulation_results$y$health,
+  health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
-  child_health_STEM = garden_simulation_results$y$health_STEM,
+  health_STEM = garden_simulation_results$y$health_STEM,
   biodiversity_STEM = garden_simulation_results$y$biodiversity, 
    plot_return = "scatter" 
 )
@@ -472,15 +473,15 @@ knitr::include_graphics("figures/public_pareto_surface.png")
 
 Pareto-optimal points for public school options:
 
-```{r pareto_front_posthoc_public}
+```{r pareto_posthoc_public}
 
-source("functions/pareto_front_posthoc.R")
-public_pareto_posthoc <- pareto_front_posthoc(
+source("functions/pareto_posthoc.R")
+public_pareto_posthoc <- pareto_posthoc(
   economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
-  child_health_garden = garden_simulation_results$y$health,
+  health_garden = garden_simulation_results$y$health,
   biodiversity_garden = garden_simulation_results$y$biodiversity,
   economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
-  child_health_STEM = garden_simulation_results$y$health_STEM,
+  health_STEM = garden_simulation_results$y$health_STEM,
   biodiversity_STEM = garden_simulation_results$y$biodiversity
 )
 public_pareto_posthoc
