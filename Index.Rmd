@@ -312,16 +312,24 @@ Here we assess value of information with the `multi_EVPI` function. We calculate
 # Subset the outputs from the mcSimulation function (y) by selecting the correct variables be sure to run the multi_EVPI only on the variables that we want. Find them with names(garden_simulation_results$y)
 mcSimulation_table <- data.frame(garden_simulation_results$x, 
                                  garden_simulation_results$y[1:9])
+
+# List of NPV variables to move to the last position (calculate 4 EVPIs only)
+npvs_to_move <- c("NPV_garden", "NPV_garden_STEM", 
+                  "NPV_garden_public_school", "NPV_garden_STEM_public_school")
+
+# Move NPV variables to the last position
+mcSimulation_table <- mcSimulation_table %>% select(-all_of(npvs_to_move), all_of(npvs_to_move))
+
 ```
 
 Calculate EVPI:
 
 ```{r evpi-general_calc}
-source("functions/multi_EVPI.R")
-data_evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden")
-# save as a local .csv (takes ~ a day to run this)
- save(evpi,file="data/data_evpi.Rda")
-# load("data/data_evpi.Rda")
+source("functions/multi_EVPI_test.R")
+# evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden")
+# save as a local .csv (takes ~ 15 minutes to run this)
+# save(evpi,file="data/data_evpi.Rda")
+ load("data/data_evpi.Rda")
 # open from saved file (last model run) - it is stable result / takes very long to run 
 
 ```
@@ -331,7 +339,7 @@ EVPI for private schools:
 ```{r evpi_private}
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
-plot_evpi_garden <- plot_evpi(EVPIresults = evpi_test_public_STEM, 
+plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
                               decision_vars = "NPV_garden", 
                               new_names = "Garden",
                             input_table = input_table, 
@@ -535,7 +543,7 @@ Here we provide a summary of the garden intervention options. We do this with a 
 ```{r gtExtras_summary_x, warning=FALSE, message=FALSE}
 # Subset the outputs from the mcSimulation function (y) to summarize only on the variables that we want.
 # names(garden_simulation_results$x)
-mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7,21:30]) #, ,32:41,43:70,73:76 also of possible interest
+mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7]) #, 21:30, 32:41, 43:70, 73:76)  also of possible interest
 
  gtExtras::gt_plt_summary(mcSimulation_table_x) 
 # a summary table with missing, mean, median and sd
