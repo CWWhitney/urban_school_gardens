@@ -7,7 +7,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(knitr)
-knitr::opts_chunk$set(echo = FALSE,
+knitr::opts_chunk$set(echo = TRUE,
                out.width = "75%", 
                fig.align = "center")
 
@@ -210,7 +210,26 @@ plot_pls_STEM <- plot_pls(plsrResults = pls_result_STEM,
 plot_pls_garden / plot_pls_STEM 
 ```
 
-PLS for public schools: 
+### Interpretation of PLS results for private schools
+
+Garden options for private schools:
+
+```{r pls_posthoc_private_garden}
+
+source("functions/pls_posthoc.R")
+pls_posthoc(plsrResults = pls_result, threshold = 0.9)
+
+```
+
+STEM options for private schools: 
+
+```{r pls_posthoc_private_STEM}
+
+pls_posthoc(plsrResults = pls_result_STEM, threshold = 0.9)
+
+```
+
+## PLS for public schools: 
 
 ```{r pls_public}
 
@@ -248,7 +267,27 @@ plot_pls_public_STEM <- plot_pls(pls_result_STEM_public,
 
 plot_pls_garden_public / plot_pls_public_STEM 
 ```
-<!-- Exclude the specific PLS figure generation from supplementary but keep teh general build up of the figure -->
+
+### Interpretation of PLS results for public schools
+
+Garden option in public school: 
+
+```{r pls_posthoc_public_garden}
+
+source("functions/pls_posthoc.R")
+pls_posthoc(plsrResults = pls_result_garden_public, threshold = 0.9)
+
+```
+
+STEM option in public school: 
+
+```{r pls_posthoc_public_STEM}
+
+pls_posthoc(plsrResults = pls_result_STEM_public, threshold = 0.9)
+
+```
+
+<!-- Exclude the specific PLS figure generation from supplementary but keep the general build up of the figure -->
 
 ```{r save_pls, include = FALSE}
 
@@ -265,7 +304,7 @@ ggsave("figures/Fig_7_VIP.png", width=8, height=6)
 
 ```
 
-# Value of Information
+## Value of Information
 
 Here we assess value of information with the `multi_EVPI` function. We calculate value of information in the form of Expected Value of Perfect Information (EVPI).
 
@@ -299,7 +338,8 @@ EVPI for private schools:
 plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
                               decision_vars = "NPV_garden", 
                               new_names = "Garden",
-                            input_table = input_table) +
+                            input_table = input_table, 
+                            threshold = 10) +
   theme(legend.position = "none", axis.title.x = element_blank(), 
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + 
@@ -310,7 +350,8 @@ plot_evpi_garden <- plot_evpi(EVPIresults = evpi,
 plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
                             decision_vars = "NPV_garden_STEM", 
                             new_names = "STEM garden",
-                            input_table = input_table)+ scale_x_continuous(limits = c(0, 210)) 
+                            input_table = input_table, 
+                            threshold = 10)+ scale_x_continuous(limits = c(0, 210)) 
 
  plot_evpi_garden / plot_evpi_STEM
 ```
@@ -324,7 +365,8 @@ EVPI for public schools:
 # using the results of the same multi_EVPI
 plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school", 
                             new_names = "Garden", 
-                            input_table = input_table) +
+                            input_table = input_table, 
+                            threshold = 10) +
   theme(legend.position = "none", axis.title.x = element_blank(), 
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + 
@@ -335,7 +377,8 @@ plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school",
 # using the results of the same multi_EVPI
 plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school", 
                             new_names = "STEM garden",
-                            input_table = input_table) + 
+                            input_table = input_table, 
+                            threshold = 10) + 
   scale_x_continuous(limits = c(0, 210))  #210
 
 plot_evpi_public / plot_evpi_public_STEM
@@ -358,7 +401,6 @@ public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(he
 ggsave("figures/Fig_8_EVPI.png", width=9, height=13) 
 
 ```
-
 
 ## Cash flows
 
@@ -388,7 +430,7 @@ ggsave("figures/Fig_9_cashflow.png", width=5, height=5)
 
 ```
 
-# Pareto front
+## Pareto-optimal solutions 
 
 These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
 
@@ -397,7 +439,7 @@ These figures display the Pareto-optimal solutions, representing the best trade-
 
 ```
 
-## Private schools pareto front
+Private schools Pareto-optimal solutions:
 
 ```{r plot_pareto_private}
 source("functions/plot_pareto.R")
@@ -425,7 +467,7 @@ knitr::include_graphics("figures/private_pareto_surface.png")
 
 ```
 
-Trade offs for private school pareto:
+Private school Pareto-optimal solutions interpretation:
 
 ```{r pareto_posthoc_private}
 
@@ -442,7 +484,7 @@ private_pareto_posthoc
 
 ```
 
-## Public schools pareto front
+Public schools Pareto-optimal solutions: 
 
 ```{r plot_pareto_public}
 source("functions/plot_pareto.R")
@@ -471,7 +513,7 @@ knitr::include_graphics("figures/public_pareto_surface.png")
 
 ```
 
-Pareto-optimal points for public school options:
+Public school Pareto-optimal solutions interpretation:
 
 ```{r pareto_posthoc_public}
 
@@ -488,10 +530,9 @@ public_pareto_posthoc
 
 ```
 
+## Input data for the simulations 
 
-# Input data for the simulations 
-
-## Summary
+### Summary
 
 Here we provide a summary of the garden intervention options. We do this with a summary table of the simulation results. We show the percentage of missing values as well as the mean, median and standard deviation (SD) for each output of our model simulations. We use the `gt_plt_summary()` from {gtExtras} and with options from {svglite}. The table shows the  name, the plot overview as well as the number of missing values, the mean, median and the standard deviation of the distribution for all variables that were fed into the model from our input table of uncertainty values. 
 
