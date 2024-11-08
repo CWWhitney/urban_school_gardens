@@ -318,31 +318,11 @@ Calculate EVPI:
 
 ```{r evpi-general_calc}
 source("functions/multi_EVPI.R")
-
-evpi_private_garden_data <- mcSimulation_table[c(1:77, 81:85)] # only public garden related
-# library(dplyr) # Move "NPV" to the last position using dplyr's select()
-evpi_private_garden_data <- evpi_private_garden_data %>% select(-NPV_garden, NPV_garden)
-
-evpi_private_STEM_data <- mcSimulation_table[c(1:76, 78, 81:85)] # only public STEM related
-evpi_private_STEM_data <- evpi_private_STEM_data %>% select(-NPV_garden_STEM, NPV_garden_STEM)
-
-evpi_public_garden_data <- mcSimulation_table[c(1:76, 79, 81:85)] # only public garden related
-evpi_public_garden_data <- evpi_public_garden_data %>% select(-NPV_garden_public_school, NPV_garden_public_school)
-
-evpi_public_STEM_data <- mcSimulation_table[c(1:76, 80:85)]  # only public STEM related
-evpi_public_STEM_data <- evpi_public_STEM_data %>% select(-NPV_garden_STEM_public_school, NPV_garden_STEM_public_school)
-
-# first_out_var is the first result variable in the table, "NPV_garden" in our case.
-# names(garden_simulation_results$y)
-#  evpi <- multi_EVPI(mc = mcSimulation_table, first_out_var = "NPV_garden")
-
-source("functions/multi_EVPI_test.R")
-evpi_test_public_STEM <- multi_EVPI_test(mc = evpi_private_garden_data, first_out_var = "NPV_garden")
-
+data_evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden")
 # save as a local .csv (takes ~ a day to run this)
-# save(evpi,file="data/data_evpi.Rda")
- load("data/data_evpi.Rda")
-# open from saved file (last model run)
+ save(evpi,file="data/data_evpi.Rda")
+# load("data/data_evpi.Rda")
+# open from saved file (last model run) - it is stable result / takes very long to run 
 
 ```
 
