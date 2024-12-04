@@ -586,9 +586,18 @@ school_garden_function <- function(x, varnames){
              discount_rate = discount_rate, 
              calculate_NPV = TRUE)
   
-  biodiversity <- sum(environment_related_value) #assume the same ecology value
-  health <- sum(health_related_value) 
-  health_STEM <- sum(health_related_value_STEM)
+  biodiversity <- 
+    discount(x = environment_related_value,
+             discount_rate = discount_rate,
+             calculate_NPV = TRUE) #assume the same ecology value
+  health <- 
+    discount(x = health_related_value,
+             discount_rate = discount_rate,
+             calculate_NPV = TRUE)
+  health_STEM  <- 
+    discount(x = health_related_value_STEM,
+             discount_rate = discount_rate,
+             calculate_NPV = TRUE)
   
   ### END of garden model script ####
   
