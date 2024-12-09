@@ -183,6 +183,7 @@ result <- rmoo::nsga2(
     fitness = fitness,
     lower = lower,
     upper = upper,
+    selection = rmoo::nsga_tourSelection,
     population = my_population,
     mutation = my_mutation,
     crossover = my_crossover,
