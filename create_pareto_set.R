@@ -193,22 +193,81 @@ result <- rmoo::nsga2(
     names = decision_var_names
 )
 
-mat = result@fitness
 
-rmoo::summary(result)
 
-mat = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 
 library(plotly)
-plotly::plot_ly(x = mat[,1], y = mat[,2], z = mat[,3], 
-        type = "scatter3d", mode = "markers",
-        marker = list(color = 'blue', size = 5)) %>%
+
+load(file="data/optimization_results/private_nostem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set1 = mat2[front1_set, ]
+
+load(file="private_stem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set2 = mat2[front1_set, ]
+set2 = set2[set2[, 1]>0, ]
+
+load(file="public_nostem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set3 = mat2[front1_set, ]
+
+load(file="public_stem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set4 = mat2[front1_set, ]
+
+plot_ly() %>%
+  add_trace(x = set1[,1], y = set1[,2], z = set1[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'blue', size = 5),
+            name = 'private, no STEM') %>%
+  add_trace(x = set2[,1], y = set2[,2], z = set2[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'red', size = 5),
+            name = 'private, STEM') %>%
+  add_trace(x = set3[,1], y = set3[,2], z = set3[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'green', size = 5),
+            name = 'public, no STEM') %>%
+  add_trace(x = set4[,1], y = set4[,2], z = set4[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'orange', size = 5),
+            name = 'public, STEM') %>%
   layout(scene = list(xaxis = list(title = 'economic'),
                       yaxis = list(title = 'biodiversity'),
                       zaxis = list(title = 'health')))
 
-# Create a 2D scatterplot using the first two columns
-plot(mat[,2], mat[,3], 
-     xlab = "biodiversity", ylab = "health", 
-     main = "2D Scatterplot", 
-     pch = 19, col = "blue")
+library(ggplot2)
+# Convert matrix to a data frame
+df <- as.data.frame(set1)
+colnames(df) = c("economic", "biodiversity", "health")
+
+# Create pairwise scatterplots
+pairs <- expand.grid(names(df), names(df))
+pairs <- pairs[pairs$Var1 != pairs$Var2, ]  # Remove diagonal pairs
+pairs <- unique(t(apply(pairs, 1, sort)))  # Get unique pairs
+pairs <- as.data.frame(pairs)
+colnames(pairs) <- c("Col1", "Col2")
+
+# Generate scatterplots
+plots <- lapply(1:nrow(pairs), function(i) {
+  ggplot(df, aes_string(x = pairs$Col1[i], y = pairs$Col2[i])) +
+    geom_point() +
+    labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i]))
+})
+
+# Display the plots
+library(gridExtra)
+combined_plot = do.call(grid.arrange, c(plots, ncol = 3))
+ggsave("scatterplot_grid.png", combined_plot, width = 10, height = 6)
