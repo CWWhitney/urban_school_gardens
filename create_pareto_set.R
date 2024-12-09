@@ -146,15 +146,26 @@ my_crossover <- function(object, parents) {
   parent2 <- population[parents[2], ]
   if (runif(1) < crossover_rate) {
     print("Crossover")
-    # Perform crossover
-    crossover_point <- sample(1:(num_vars-1), 1)
-    child1 <- c(parent1[1:crossover_point], parent2[(crossover_point + 1):num_vars])
-    child2 <- c(parent2[1:crossover_point], parent1[(crossover_point + 1):num_vars])
+    
+    # Perform gene-by-gene crossover
+    child1 <- numeric(num_vars)
+    child2 <- numeric(num_vars)
+    
+    for (i in 1:num_vars) {
+      if (runif(1) < 0.5) {  # 50% chance to take gene from each parent
+        child1[i] <- parent1[i]
+        child2[i] <- parent2[i]
+      } else {
+        child1[i] <- parent2[i]
+        child2[i] <- parent1[i]
+      }
+    }
   } else {
     # No crossover, copy parents
     child1 <- parent1
     child2 <- parent2
   }
+
   children_fitness <- c(NA, NA)
 
   children[1, ] <- child1
