@@ -205,7 +205,7 @@ front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set1 = mat2[front1_set, ]
 
-load(file="private_stem_500_200_100.RData")
+load(file="data/optimization_results/private_stem_500_200_100.RData")
 rmoo::summary(result)
 mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
@@ -213,14 +213,14 @@ mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set2 = mat2[front1_set, ]
 set2 = set2[set2[, 1]>0, ]
 
-load(file="public_nostem_500_200_100.RData")
+load(file="data/optimization_results/public_nostem_500_200_100.RData")
 rmoo::summary(result)
 mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set3 = mat2[front1_set, ]
 
-load(file="public_stem_500_200_100.RData")
+load(file="data/optimization_results/public_stem_500_200_100.RData")
 rmoo::summary(result)
 mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
@@ -249,25 +249,59 @@ plot_ly() %>%
                       zaxis = list(title = 'health')))
 
 library(ggplot2)
-# Convert matrix to a data frame
-df <- as.data.frame(set1)
-colnames(df) = c("economic", "biodiversity", "health")
+library(cowplot)
 
-# Create pairwise scatterplots
-pairs <- expand.grid(names(df), names(df))
-pairs <- pairs[pairs$Var1 != pairs$Var2, ]  # Remove diagonal pairs
-pairs <- unique(t(apply(pairs, 1, sort)))  # Get unique pairs
+# Convert matrices to data frames and add a "Dataset" column
+df1 <- as.data.frame(set1); df1$option <- "private, no STEM"
+df2 <- as.data.frame(set2); df2$option <- "private, STEM"
+df3 <- as.data.frame(set3); df3$option <- "public, no STEM"
+df4 <- as.data.frame(set4); df4$option <- "public, STEM"
+
+# Combine all data frames
+df_combined <- rbind(df1, df2, df3, df4)
+
+colnames(df_combined) = c("economy", "biodiversity", "health", "option")
+
+# Generate pairwise combinations
+pairs <- expand.grid(names(df_combined)[1:3], names(df_combined)[1:3])  # Ignore 'Dataset' column
+pairs <- pairs[pairs$Var1 != pairs$Var2, ]              # Remove diagonal pairs
+pairs <- unique(t(apply(pairs, 1, sort)))               # Get unique pairs
 pairs <- as.data.frame(pairs)
 colnames(pairs) <- c("Col1", "Col2")
 
-# Generate scatterplots
+
+get_legend <- function(my_plot) {
+  g <- ggplotGrob(my_plot)
+  legend <- g$grobs[which(sapply(g$grobs, function(x) x$name) == "guide-box")]
+  return(legend)
+}
+
+
+# Generate scatterplots without individual legends
 plots <- lapply(1:nrow(pairs), function(i) {
-  ggplot(df, aes_string(x = pairs$Col1[i], y = pairs$Col2[i])) +
+  ggplot(df_combined, aes_string(x = pairs$Col1[i], y = pairs$Col2[i], color = "option")) +
     geom_point() +
-    labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i]))
+    #labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i])) +
+    scale_color_manual(values = c("private, no STEM" = "blue", "private, STEM" = "orange",
+                                  "public, no STEM" = "darkgreen", "public, STEM" = "red")) +  # Custom colors
+    theme_minimal() +
+    theme(legend.position = "none")  # Remove individual legends
 })
 
-# Display the plots
-library(gridExtra)
-combined_plot = do.call(grid.arrange, c(plots, ncol = 3))
-ggsave("scatterplot_grid.png", combined_plot, width = 10, height = 6)
+df_combined$Dataset = factor(df_combined$option)
+
+
+# Combine plots and the single legend
+combined_plot <- plot_grid(
+  plot_grid(plotlist = plots, ncol = 2),  # Arrange plots
+  ncol = 1,
+  rel_heights = c(4, 0.5)  # Adjust space for the legend
+)
+ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
+
+
+
+write.table(set1, file="data/optimization_results/set1.csv")
+write.table(set2, file="data/optimization_results/set2.csv")
+write.table(set3, file="data/optimization_results/set3.csv")
+write.table(set4, file="data/optimization_results/set4.csv")
