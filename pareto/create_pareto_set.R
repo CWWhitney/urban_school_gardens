@@ -56,9 +56,9 @@ fitness <- function(decision_vars) {
         }
         res = school_garden_function()
         
-        money = append(money, res$NPV_garden)
+        money = append(money, res$NPV_garden_STEM_public_school)
         biodiversity = append(biodiversity, res$biodiversity)
-        health = append(health, res$health)
+        health = append(health, res$health_STEM)
     }
     res = c(-mean(money)*0.01, -mean(biodiversity), -mean(health)*0.01)
     
@@ -260,7 +260,7 @@ df4 <- as.data.frame(set4); df4$option <- "public, STEM"
 # Combine all data frames
 df_combined <- rbind(df1, df2, df3, df4)
 
-colnames(df_combined) = c("economy", "biodiversity", "health", "option")
+colnames(df_combined) = c("economic", "biodiversity", "health", "option")
 
 # Generate pairwise combinations
 pairs <- expand.grid(names(df_combined)[1:3], names(df_combined)[1:3])  # Ignore 'Dataset' column
