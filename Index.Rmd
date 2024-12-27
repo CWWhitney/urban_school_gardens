@@ -336,55 +336,60 @@ source("functions/multi_EVPI_test.R")
 
 EVPI for private schools:
 
-```{r evpi_private}
+```{r evpi_private_1}
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
-plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
-                              decision_vars = "NPV_garden_inclusive", 
-                              new_names = "Garden",
-                            input_table = input_table, 
-                            threshold = 10) +
-  theme(legend.position = "none", axis.title.x = element_blank(), 
-  axis.text.x = element_blank(),
-  axis.ticks = element_blank()) + 
-  scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school) 
+#plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
+  #                             decision_vars = "NPV_garden_inclusive", 
+  #                             new_names = "Garden",
+  #                           input_table = input_table, 
+  #                           threshold = 10) +
+  # theme(legend.position = "none", axis.title.x = element_blank(), 
+  # axis.text.x = element_blank(),
+  # axis.ticks = element_blank()) + 
+  # scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school) 
+```
 
+```{r evpi_private_2}
 # Value of information for the garden option with formal STEM education.
 # using the results of the same multi_EVPI
-plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
-                            decision_vars = "NPV_garden_STEM_inclusive", 
-                            new_names = "STEM garden",
-                            input_table = input_table, 
-                            threshold = 10)+ scale_x_continuous(limits = c(0, 210)) 
+# plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
+#                             decision_vars = "NPV_garden_STEM_inclusive", 
+#                             new_names = "STEM garden",
+#                             input_table = input_table, 
+#                             threshold = 10) + scale_x_continuous(limits = c(0, 210)) 
 
- plot_evpi_garden / plot_evpi_STEM
+# plot_evpi_garden / plot_evpi_STEM
 ```
 
 EVPI for public schools:
 
-```{r evpi_public}
+```{r evpi_public_1}
 
 # Value of information for the public school garden option with no formal STEM education.
 
 # using the results of the same multi_EVPI
-plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school_inclusive", 
-                            new_names = "Garden", 
-                            input_table = input_table, 
-                            threshold = 10) +
-  theme(legend.position = "none", axis.title.x = element_blank(), 
-  axis.text.x = element_blank(),
-  axis.ticks = element_blank()) + 
-  scale_x_continuous(limits = c(0, 210)) + ggtitle(label_public_school) #210
+# plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school_inclusive", 
+#                             new_names = "Garden", 
+#                             input_table = input_table, 
+#                             threshold = 10) +
+#   theme(legend.position = "none", axis.title.x = element_blank(), 
+#   axis.text.x = element_blank(),
+#   axis.ticks = element_blank()) + 
+#   scale_x_continuous(limits = c(0, 210)) + ggtitle(label_public_school) #210
 
+```
+
+```{r evpi_public_2}
 
 # Value of information for the public school garden option with formal STEM education.
 # using the results of the same multi_EVPI
 plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school_inclusive", 
                             new_names = "STEM garden",
                             input_table = input_table, 
-                            threshold = 10) + 
-  scale_x_continuous(limits = c(0, 210))  #210
-
+                            threshold = 10) # + 
+#  scale_x_continuous(limits = c(0, 210))  #210
+plot_evpi_public_STEM
 # plot_evpi_public / plot_evpi_public_STEM
 
 ```
@@ -395,10 +400,10 @@ plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public
 
 # Generate figure
 # private and public schools EVPI
-public_evpi_together <- plot_evpi_garden / plot_evpi_STEM + 
-  theme(legend.position = "none", axis.title.x = element_blank(), 
-  axis.text.x = element_blank(),
-  axis.ticks = element_blank())  
+# public_evpi_together <- plot_evpi_garden / plot_evpi_STEM + 
+#   theme(legend.position = "none", axis.title.x = element_blank(), 
+#   axis.text.x = element_blank(),
+#   axis.ticks = element_blank())  
 
 # public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(heights = c(0.2, 0.4, 0.3, 0.4))
 
@@ -428,19 +433,21 @@ plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_resu
               cashflow_var_name = "Cashflow_garden_STEM", 
               facet_labels = "STEM Garden")
 
-# manually share axis label (not a feature of patchwork)
+# # manually share axis label (not a feature of patchwork)
+# 
+# ylab <- plot_cashflow_garden$labels$y
+# plot_cashflow_garden$labels$y <- plot_cashflow_STEM$labels$y <- " "
+# 
+# h_patch <- plot_cashflow_garden / plot_cashflow_STEM 
+# # Use the tag label as a y-axis label
+# wrap_elements(h_patch) +
+#   labs(tag = "Cashflow") +
+#   theme(
+#     plot.tag = element_text(size = rel(1), angle = 90),
+#     plot.tag.position = "left"
+#   )
 
-ylab <- plot_cashflow_garden$labels$y
-plot_cashflow_garden$labels$y <- plot_cashflow_STEM$labels$y <- " "
-
-h_patch <- plot_cashflow_garden / plot_cashflow_STEM 
-# Use the tag label as a y-axis label
-wrap_elements(h_patch) +
-  labs(tag = "Cashflow") +
-  theme(
-    plot.tag = element_text(size = rel(1), angle = 90),
-    plot.tag.position = "left"
-  )
+plot_cashflow_garden / plot_cashflow_STEM
 
 ggsave("figures/Fig_9_cashflow.png", width=5, height=5) 
 
