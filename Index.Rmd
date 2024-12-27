@@ -58,9 +58,9 @@ For public schools:
 ```{r plot_dist_public, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden_public_school", 
-                                             "NPV_garden_STEM_public_school"),
-                   old_names = c("NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                                    vars = c("NPV_garden_public_school_inclusive", 
+                                             "NPV_garden_STEM_public_school_inclusive"),
+                   old_names = c("NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
                    new_names = c("NPV public school garden", "NPV public school garden with STEM"),
                                     method = 'smooth_simple_overlay', 
                                     base_size = 7, 
@@ -72,8 +72,8 @@ For private schools:
 ```{r plot_dist_private, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden","NPV_garden_STEM"),
-                   old_names = c("NPV_garden","NPV_garden_STEM"),
+                                    vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
+                   old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
                    new_names = c("NPV private school garden","NPV private school with STEM"),
                                     method = 'smooth_simple_overlay', 
                                     base_size = 7, 
@@ -85,8 +85,8 @@ The same results again but this time as boxplots:
 ```{r plot_boxplot_public_private, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                   vars = c("NPV_garden","NPV_garden_STEM", "NPV_garden_public_school", "NPV_garden_STEM_public_school"),
-                   old_names = c("NPV_garden","NPV_garden_STEM", "NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                   vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
+                   old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
                    new_names = c("NPV private school garden","NPV private school with STEM", "NPV public school garden", "NPV public school garden with STEM"),
                                     method = "boxplot", 
                                     base_size = 7, 
@@ -100,8 +100,8 @@ As boxplots and distributions for public schools:
 ```{r plot_distboxplot_public, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden_public_school", "NPV_garden_STEM_public_school"),
-                   old_names = c("NPV_garden_public_school", "NPV_garden_STEM_public_school"),
+                                    vars = c("NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
+                   old_names = c("NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
                    new_names = c("NPV public school garden", "NPV public school garden with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7, 
@@ -113,8 +113,8 @@ As boxplots and distributions for private schools:
 ```{r plot_distboxplot_private, warning=FALSE, message=FALSE}
 source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
-                                    vars = c("NPV_garden","NPV_garden_STEM"),
-                   old_names = c("NPV_garden","NPV_garden_STEM"),
+                                    vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
+                   old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
                    new_names = c("NPV private school garden","NPV private school with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7, 
@@ -126,25 +126,25 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
 Summary of the NPVs for the passive education garden and STEM options for private schools:
 
 ```{r summary_private_decision, warning=FALSE, message=FALSE}
-summary(garden_simulation_results$y[1:2]) #"NPV_garden"                    "NPV_garden_STEM"
+summary(garden_simulation_results$y[1:2]) #"NPV_garden_inclusive"                    "NPV_garden_STEM_inclusive"
 ```
 
 Summary of the NPVs for the passive education garden and STEM options for public schools:
 
 ```{r summary_public_decision, warning=FALSE, message=FALSE}
-summary(garden_simulation_results$y[3:4]) #"NPV_garden_public_school"      "NPV_garden_STEM_public_school"
+summary(garden_simulation_results$y[3:4]) #"NPV_garden_public_school_inclusive"      "NPV_garden_STEM_public_school_inclusive"
 ```
 
 Summary of the child health outcomes for private and public schools:
 
 ```{r summary_child_health, warning=FALSE, message=FALSE}
-summary(garden_simulation_results$y[6:7]) #"health" "health_STEM" 
+summary(garden_simulation_results$y[10:11]) #"health" "health_STEM" 
 ```
 
 Summary of the biodiversity outcomes for the passive education garden and STEM options for private and public schools:
 
 ```{r summary_biodiversity, warning=FALSE, message=FALSE}
-summary(garden_simulation_results$y[5]) #"biodiversity"
+summary(garden_simulation_results$y[9]) #"biodiversity"
 ```
 
 ## Summary of costs
@@ -152,7 +152,7 @@ summary(garden_simulation_results$y[5]) #"biodiversity"
 Total expected costs for a school garden with and without STEM education:
 
 ```{r summary_costs, warning=FALSE, message=FALSE}
-summary(garden_simulation_results$y[8:9])
+summary(garden_simulation_results$y[12:13])
 ```
 
 First year expected costs for a school garden:
@@ -178,7 +178,7 @@ PLS for private schools:
 # For passive education garden option
 source("functions/pls_model.R")
 pls_result <- pls_model(object = garden_simulation_results,
-                resultName = names(garden_simulation_results$y)[1], # the "NPV_garden" 
+                resultName = names(garden_simulation_results$y)[1], # the "NPV_garden_inclusive" 
                                 ncomp = 1)
 # read in the common input table
 input_table <- read.csv("data/inputs_school_garden.csv")
@@ -274,7 +274,6 @@ Garden option in public school:
 
 ```{r pls_posthoc_public_garden}
 
-source("functions/pls_posthoc.R")
 pls_posthoc(plsrResults = pls_result_garden_public, threshold = 0.9)
 
 ```
@@ -287,6 +286,7 @@ pls_posthoc(plsrResults = pls_result_STEM_public, threshold = 0.9)
 
 ```
 
+
 <!-- Exclude the specific PLS figure generation from supplementary but keep the general build up of the figure -->
 
 ```{r save_pls, include = FALSE}
@@ -298,7 +298,7 @@ public_pls <- plot_pls_garden / plot_pls_STEM + theme(legend.position = "none", 
   axis.ticks = element_blank())  # for the main title
 
 public_pls /
-plot_pls_garden_public / plot_pls_public_STEM + plot_layout(heights = c(3, 4, 5, 4))
+plot_pls_garden_public / plot_pls_public_STEM + plot_layout(heights = c(6, 6, 7, 8))
 
 ggsave("figures/Fig_7_VIP.png", width=8, height=6) 
 
@@ -311,11 +311,11 @@ Here we assess value of information with the `multi_EVPI` function. We calculate
 ```{r mc_table, warning=FALSE, message=FALSE}
 # Subset the outputs from the mcSimulation function (y) by selecting the correct variables be sure to run the multi_EVPI only on the variables that we want. Find them with names(garden_simulation_results$y)
 mcSimulation_table <- data.frame(garden_simulation_results$x, 
-                                 garden_simulation_results$y[1:9])
+                                 garden_simulation_results$y[1:4])
 
 # List of NPV variables to move to the last position (calculate 4 EVPIs only)
-npvs_to_move <- c("NPV_garden", "NPV_garden_STEM", 
-                  "NPV_garden_public_school", "NPV_garden_STEM_public_school")
+npvs_to_move <- c("NPV_garden_inclusive", "NPV_garden_STEM_inclusive", 
+                  "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive")
 
 # Move NPV variables to the last position
 mcSimulation_table <- mcSimulation_table %>% select(-all_of(npvs_to_move), all_of(npvs_to_move))
@@ -326,7 +326,7 @@ Calculate EVPI:
 
 ```{r evpi-general_calc}
 source("functions/multi_EVPI_test.R")
-# evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden")
+# evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden_inclusive")
 # save as a local .csv (takes ~ 15 minutes to run this)
 # save(evpi,file="data/data_evpi.Rda")
  load("data/data_evpi.Rda")
@@ -340,7 +340,7 @@ EVPI for private schools:
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
 plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
-                              decision_vars = "NPV_garden", 
+                              decision_vars = "NPV_garden_inclusive", 
                               new_names = "Garden",
                             input_table = input_table, 
                             threshold = 10) +
@@ -352,7 +352,7 @@ plot_evpi_garden <- plot_evpi(EVPIresults = evpi,
 # Value of information for the garden option with formal STEM education.
 # using the results of the same multi_EVPI
 plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
-                            decision_vars = "NPV_garden_STEM", 
+                            decision_vars = "NPV_garden_STEM_inclusive", 
                             new_names = "STEM garden",
                             input_table = input_table, 
                             threshold = 10)+ scale_x_continuous(limits = c(0, 210)) 
@@ -367,7 +367,7 @@ EVPI for public schools:
 # Value of information for the public school garden option with no formal STEM education.
 
 # using the results of the same multi_EVPI
-plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school", 
+plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school_inclusive", 
                             new_names = "Garden", 
                             input_table = input_table, 
                             threshold = 10) +
@@ -379,17 +379,17 @@ plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school",
 
 # Value of information for the public school garden option with formal STEM education.
 # using the results of the same multi_EVPI
-plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school", 
+plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school_inclusive", 
                             new_names = "STEM garden",
                             input_table = input_table, 
                             threshold = 10) + 
   scale_x_continuous(limits = c(0, 210))  #210
 
-plot_evpi_public / plot_evpi_public_STEM
+# plot_evpi_public / plot_evpi_public_STEM
 
 ```
 
-<!-- Exclude the specific EVPI figure generation from supplementary but keep teh general build up of the figure -->
+<!-- Exclude the specific EVPI figure generation from supplementary but keep the general build up of the figure -->
 
 ```{r save_evpi, include = FALSE}
 
@@ -400,15 +400,15 @@ public_evpi_together <- plot_evpi_garden / plot_evpi_STEM +
   axis.text.x = element_blank(),
   axis.ticks = element_blank())  
 
-public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(heights = c(0.7, 2.5, 2, 8))
+# public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(heights = c(0.2, 0.4, 0.3, 0.4))
 
-ggsave("figures/Fig_8_EVPI.png", width=9, height=13) 
+# ggsave("figures/Fig_8_EVPI.png", width=9, height=13) 
 
 ```
 
 ## Cash flows
 
-Cash flow plots of the garden option without formal STEM education. These are the expected costs for public and private schools over the intervention.
+Cash flow plots of the garden option without formal STEM education. These are the expected returns for public and private schools over the intervention.
 
 ```{r cashflow_garden, warning=FALSE, message=FALSE}
 # Cashflow of the garden option without formal STEM education
@@ -428,7 +428,19 @@ plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_resu
               cashflow_var_name = "Cashflow_garden_STEM", 
               facet_labels = "STEM Garden")
 
-plot_cashflow_garden / plot_cashflow_STEM 
+# manually share axis label (not a feature of patchwork)
+
+ylab <- plot_cashflow_garden$labels$y
+plot_cashflow_garden$labels$y <- plot_cashflow_STEM$labels$y <- " "
+
+h_patch <- plot_cashflow_garden / plot_cashflow_STEM 
+# Use the tag label as a y-axis label
+wrap_elements(h_patch) +
+  labs(tag = "Cashflow") +
+  theme(
+    plot.tag = element_text(size = rel(1), angle = 90),
+    plot.tag.position = "left"
+  )
 
 ggsave("figures/Fig_9_cashflow.png", width=5, height=5) 
 
@@ -437,11 +449,6 @@ ggsave("figures/Fig_9_cashflow.png", width=5, height=5)
 ## Pareto-optimal solutions 
 
 These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
-
-```{r controll_variables}
-
-
-```
 
 Private schools Pareto-optimal solutions:
 
