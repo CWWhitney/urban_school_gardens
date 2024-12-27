@@ -432,12 +432,21 @@ school_garden_function <- function(x, varnames){
                     # health_related_value + environment_related_value + 
                     community_value
   
+  total_benefit_inclusive <- harvest_value + learning_value + 
+    outside_investment + increased_enrollment + 
+    health_related_value + environment_related_value + 
+    community_value
+  
   # Add up all benefits with STEM ####
   total_benefit_STEM <- harvest_value + learning_value_STEM + 
     outside_investment_STEM + increased_enrollment_STEM + 
     # health_related_value_STEM + environment_related_value + 
     community_value
     
+  total_benefit_STEM_inclusive <- harvest_value + learning_value_STEM + 
+    outside_investment_STEM + increased_enrollment_STEM + 
+    health_related_value_STEM + environment_related_value + 
+    community_value
   
   ## Risks for Public Schools ####
   # Access to land 
@@ -464,8 +473,10 @@ school_garden_function <- function(x, varnames){
   } else {
     # costs and benefits are the same
     total_benefit_public_school <- total_benefit
+    total_benefit_public_school_inclusive <- total_benefit_inclusive
     total_cost_public_school <- total_cost
     total_benefit_STEM_public_school <- total_benefit_STEM
+    total_benefit_STEM_public_school_inclusive <- total_benefit_STEM_inclusive
     total_cost_STEM_public_school <- total_cost_STEM
     environment_related_value <- environment_related_value
     health_related_value <- health_related_value
@@ -489,31 +500,39 @@ school_garden_function <- function(x, varnames){
      stop_garden_beurocratic_barriers == 1) {
     # no benefits from the garden
     total_benefit_public_school <- rep(0, number_of_years)
+    total_benefit_public_school_inclusive <- rep(0, number_of_years)
     # costs only in year 1
     total_cost_public_school <- (total_cost[2:number_of_years]<-0)
     # no benefits from STEM
     total_benefit_STEM_public_school <- rep(0, number_of_years)
+    total_benefit_STEM_public_school_inclusive <- rep(0, number_of_years)
     # costs only in year 1
     total_cost_STEM_public_school <- (total_cost_STEM[2:number_of_years]<-0)
   } else {
     # costs and benefits are the same
     total_benefit_public_school <- total_benefit
+    total_benefit_public_school_inclusive <- total_benefit_inclusive
     total_cost_public_school <- total_cost
     total_benefit_STEM_public_school <- total_benefit_STEM
+    total_benefit_STEM_public_school_inclusive <- total_benefit_STEM_inclusive
     total_cost_STEM_public_school <- total_cost_STEM
   }
   
   # Final result of the costs and benefits no STEM
   garden_result <- total_benefit - total_cost
+  garden_result_inclusive <- total_benefit_inclusive - total_cost
   
   # Final result of the costs and benefits STEM
   garden_result_STEM <- total_benefit_STEM - total_cost_STEM
+  garden_result_STEM_inclusive <- total_benefit_STEM_inclusive - total_cost_STEM
   
   # Final result of the costs and benefits no STEM at public school
   garden_result_public_school <- total_benefit_public_school - total_cost_public_school
+  garden_result_public_school_inclusive <- total_benefit_public_school_inclusive - total_cost_public_school
   
   # Final result of the costs and benefits STEM at public school
   garden_result_STEM_public_school <- total_benefit_STEM_public_school - total_cost_STEM_public_school
+  garden_result_STEM_public_school_inclusive <- total_benefit_STEM_public_school_inclusive - total_cost_STEM_public_school
   
   # Alternative use of garden space ####
   ## land-use result = all costs and benefits
@@ -566,6 +585,28 @@ school_garden_function <- function(x, varnames){
   
   # By including `- no_garden_result` we are calculating the expected gains
 
+  NPV_garden_inclusive <-
+    discount(x = garden_result_inclusive - no_garden_result, 
+             discount_rate = discount_rate, 
+             calculate_NPV = TRUE)
+  
+  NPV_garden_STEM_inclusive <-
+    discount(x = garden_result_STEM_inclusive - no_garden_result, 
+             discount_rate = discount_rate, 
+             calculate_NPV = TRUE)
+  
+  NPV_garden_public_school_inclusive <-
+    discount(x = garden_result_public_school_inclusive - no_garden_result, 
+             discount_rate = discount_rate, 
+             calculate_NPV = TRUE)
+  
+  NPV_garden_STEM_public_school_inclusive <-
+    discount(x = garden_result_STEM_public_school_inclusive - no_garden_result, 
+             discount_rate = discount_rate, 
+             calculate_NPV = TRUE)
+  
+  # For the Pareto
+  
   NPV_garden <-
     discount(x = garden_result - no_garden_result, 
              discount_rate = discount_rate, 
@@ -603,7 +644,13 @@ school_garden_function <- function(x, varnames){
   
   # Beware, if we do not name our outputs (left-hand side of the equal sign) 
   # in the return section, the variables will be called output_1, _2, etc.
-  return(list(NPV_garden = NPV_garden,
+  return(list(NPV_garden_inclusive = NPV_garden_inclusive,
+              # comparative results do - do nothing
+              NPV_garden_STEM_inclusive = NPV_garden_STEM_inclusive,
+              NPV_garden_public_school_inclusive = NPV_garden_public_school_inclusive,
+              NPV_garden_STEM_public_school_inclusive = NPV_garden_STEM_public_school_inclusive,
+              # for Pareto
+              NPV_garden = NPV_garden,
               # comparative results do - do nothing
               NPV_garden_STEM = NPV_garden_STEM,
               NPV_garden_public_school = NPV_garden_public_school,
