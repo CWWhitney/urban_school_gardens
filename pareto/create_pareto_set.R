@@ -197,8 +197,8 @@ my_crossover <- function(object, parents) {
     ))
 }
 
-# Optimizes for three objectives: economic return (money), biodiversity, and
-# health. Population-based algorithm with 200 'individuals' over 100 'generations'
+# Optimizes for three objectives: economic return, biodiversity, and health
+# Population-based algorithm with 200 'individuals' over 100 'generations'
 
 library(rgl)
 
@@ -217,28 +217,39 @@ result <- rmoo::nsga2(
     names = decision_var_names
 )
 
-
-library(plotly)
-
-load(file="data/optimization_results/private_nostem_500_200_100.RData")
-rmoo::summary(result)
+# Takes a very long time to run
+# Write all to RData files and load from there
 
 # Extracts Pareto-optimal solutions and scales results for interpretation.
 # Filters solutions that cannot be improved in one
 # objective without worsening another.
 
-mat = result@fitness
+load(file="data/optimization_results/private_nostem_500_200_100.RData")
+#  loads the previously saved result object from an .RData file. The object
+#  contains the results of a multi-objective optimization run, including the
+#  fitness values and population of solutions.
+rmoo::summary(result) # displays a summary of the optimization results
+mat = result@fitness 
+# contains the fitness values for all solutions in the final 
+# generation of the optimization
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+# rmoo:non_dominated_fronts()  to identify which solutions are Pareto-optimal
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+# Filters the rescaled fitness matrix (mat2) to retain only the Pareto-optimal solutions.
+
+# front1_set= indices of Pareto-optimal solutions from mat2 that includes only
+# these Pareto-optimal solutions. Example: If mat2 has 200 rows, but front1_set
+# contains 24 indices, set1 will be a 24 × 3 24×3 matrix.
 set1 = mat2[front1_set, ]
 
+# Repeat for other options
 load(file="data/optimization_results/private_stem_500_200_100.RData")
 rmoo::summary(result)
 mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
-set2 = mat2[front1_set, ]
-set2 = set2[set2[, 1]>0, ]
+set2_1 = mat2[front1_set, ]
+set2 = set2_1[set2_1[, 1]>0, ]
 
 load(file="data/optimization_results/public_nostem_500_200_100.RData")
 rmoo::summary(result)
@@ -253,6 +264,10 @@ mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set4 = mat2[front1_set, ]
+
+# Plot Pareto results ####
+
+library(plotly)
 
 plot_ly() %>%
   add_trace(x = set1[,1], y = set1[,2], z = set1[,3],
@@ -298,38 +313,38 @@ colnames(pairs) <- c("Col1", "Col2")
 
 # Create plots ####
 
-# get_legend <- function(my_plot) {
-#   g <- ggplotGrob(my_plot)
-#   legend <- g$grobs[which(sapply(g$grobs, function(x) x$name) == "guide-box")]
-#   return(legend)
-# }
-# 
-# 
-# # Generate scatterplots without individual legends
-# plots <- lapply(1:nrow(pairs), function(i) {
-#   ggplot(df_combined, aes_string(x = pairs$Col1[i], y = pairs$Col2[i], color = "option")) +
-#     geom_point() +
-#     #labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i])) +
-#     scale_color_manual(values = c("private, no STEM" = "blue", "private, STEM" = "orange",
-#                                   "public, no STEM" = "darkgreen", "public, STEM" = "red")) +  # Custom colors
-#     theme_minimal() +
-#     theme(legend.position = "none")  # Remove individual legends
-# })
-# 
-# df_combined$Dataset = factor(df_combined$option)
-# 
-# 
-# # Combine plots and the single legend ####
-# combined_plot <- plot_grid(
-#   plot_grid(plotlist = plots, ncol = 2),  # Arrange plots
-#   ncol = 1,
-#   rel_heights = c(4, 0.5)  # Adjust space for the legend
-# )
-# ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
-# 
-# 
-# # Write scenarios ####
-# write.table(set1, file="data/optimization_results/set1.csv")
-# write.table(set2, file="data/optimization_results/set2.csv")
-# write.table(set3, file="data/optimization_results/set3.csv")
-# write.table(set4, file="data/optimization_results/set4.csv")
+get_legend <- function(my_plot) {
+  g <- ggplotGrob(my_plot)
+  legend <- g$grobs[which(sapply(g$grobs, function(x) x$name) == "guide-box")]
+  return(legend)
+}
+
+
+# Generate scatterplots without individual legends
+plots <- lapply(1:nrow(pairs), function(i) {
+  ggplot(df_combined, aes_string(x = pairs$Col1[i], y = pairs$Col2[i], color = "option")) +
+    geom_point() +
+    #labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i])) +
+    scale_color_manual(values = c("private, no STEM" = "blue", "private, STEM" = "orange",
+                                  "public, no STEM" = "darkgreen", "public, STEM" = "red")) +  # Custom colors
+    theme_minimal() +
+    theme(legend.position = "none")  # Remove individual legends
+})
+
+df_combined$Dataset = factor(df_combined$option)
+
+
+# Combine plots and the single legend ####
+combined_plot <- plot_grid(
+  plot_grid(plotlist = plots, ncol = 2),  # Arrange plots
+  ncol = 1,
+  rel_heights = c(4, 0.5)  # Adjust space for the legend
+)
+ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
+
+
+# Write scenarios ####
+write.table(set1, file="data/optimization_results/set1.csv")
+write.table(set2, file="data/optimization_results/set2.csv")
+write.table(set3, file="data/optimization_results/set3.csv")
+write.table(set4, file="data/optimization_results/set4.csv")

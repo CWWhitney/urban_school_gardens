@@ -61,7 +61,7 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
                                     vars = c("NPV_garden_public_school_inclusive", 
                                              "NPV_garden_STEM_public_school_inclusive"),
                    old_names = c("NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
-                   new_names = c("NPV public school garden", "NPV public school garden with STEM"),
+                   new_names = c("NPV public school passive garden", "NPV public school STEM garden"),
                                     method = 'smooth_simple_overlay', 
                                     base_size = 7, 
                                     x_axis_name = "Comparative NPV outcomes")
@@ -74,7 +74,7 @@ source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
                                     vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
                    old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
-                   new_names = c("NPV private school garden","NPV private school with STEM"),
+                   new_names = c("NPV private school passive garden","NPV private school STEM garden"),
                                     method = 'smooth_simple_overlay', 
                                     base_size = 7, 
                                     x_axis_name = "Comparative NPV outcomes")
@@ -87,12 +87,12 @@ source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
                    vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
                    old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
-                   new_names = c("NPV private school garden","NPV private school with STEM", "NPV public school garden", "NPV public school garden with STEM"),
+                   new_names = c("NPV private school passive garden","NPV private school STEM garden", "NPV public school passive garden", "NPV public school STEM garden"),
                                     method = "boxplot", 
-                                    base_size = 7, 
+                                    base_size = 11, 
                                     x_axis_name = "Comparative NPV outcomes")
 
-ggsave("figures/boxplots_all.png", width = 15, height = 8, units = "cm")
+ggsave("figures/Fig_5_Boxplots.png", width = 15, height = 8, units = "cm")
 ```
 
 As boxplots and distributions for public schools:
@@ -166,6 +166,48 @@ First year expected costs for a school garden with STEM education:
 ```{r summary_first_year_costs_stem, warning=FALSE, message=FALSE}
 summary(garden_simulation_results$y$Cashflow_garden_STEM1)
 ```
+## Cash flows
+
+Cash flow plots of the garden option without formal STEM education. These are the expected returns for public and private schools over the intervention.
+
+```{r cashflow_garden, warning=FALSE, message=FALSE}
+# Cashflow of the garden option without formal STEM education
+# This will be the cost for public and private schools over the intervention. 
+
+source("functions/plot_cashflow.R")
+plot_cashflow_garden <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
+              cashflow_var_name = "Cashflow_garden", 
+              facet_labels = "Passive garden") + 
+  theme(legend.position = "none", axis.title.x = element_blank(), 
+  axis.text.x = element_blank(),
+  axis.ticks = element_blank())  
+
+# Cashflow of the garden option with formal STEM education
+source("functions/plot_cashflow.R")
+plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
+              cashflow_var_name = "Cashflow_garden_STEM", 
+              facet_labels = "STEM garden")
+
+# # manually share axis label (not a feature of patchwork)
+# 
+# ylab <- plot_cashflow_garden$labels$y
+# plot_cashflow_garden$labels$y <- plot_cashflow_STEM$labels$y <- " "
+# 
+# h_patch <- plot_cashflow_garden / plot_cashflow_STEM 
+# # Use the tag label as a y-axis label
+# wrap_elements(h_patch) +
+#   labs(tag = "Cashflow") +
+#   theme(
+#     plot.tag = element_text(size = rel(1), angle = 90),
+#     plot.tag.position = "left"
+#   )
+
+plot_cashflow_garden / plot_cashflow_STEM
+
+ggsave("figures/Fig_6_cashflow.png", width=5, height=5) 
+
+```
+
 
 ## Projection to Latent Structures (PLS)
 
@@ -194,7 +236,7 @@ plot_pls_garden <- plot_pls(plsrResults = pls_result,
   theme(legend.position = "none", axis.title.x = element_blank(), 
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + scale_x_continuous(limits = c(0, 7)) + ggtitle(label_private_school) + 
-  annotate(geom="text", x=5, y=1, label="Garden")
+  annotate(geom="text", x=5, y=1, label="Passive garden")
 
 #For school garden with formal STEM education
 pls_result_STEM <- pls_model(object = garden_simulation_results,
@@ -253,7 +295,7 @@ plot_pls_garden_public <- plot_pls(pls_result_garden_public,
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + 
   scale_x_continuous(limits = c(0, 7)) + ggtitle(label_public_school) + 
-  annotate(geom="text", x=5, y=1, label="Garden")
+  annotate(geom="text", x=5, y=1, label="Passive garden")
 
 #For school garden with formal STEM education
 pls_result_STEM_public <- pls_model(object = garden_simulation_results,
@@ -411,142 +453,130 @@ plot_evpi_public_STEM
 
 ```
 
-## Cash flows
-
-Cash flow plots of the garden option without formal STEM education. These are the expected returns for public and private schools over the intervention.
-
-```{r cashflow_garden, warning=FALSE, message=FALSE}
-# Cashflow of the garden option without formal STEM education
-# This will be the cost for public and private schools over the intervention. 
-
-source("functions/plot_cashflow.R")
-plot_cashflow_garden <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
-              cashflow_var_name = "Cashflow_garden", 
-              facet_labels = "Garden") + 
-  theme(legend.position = "none", axis.title.x = element_blank(), 
-  axis.text.x = element_blank(),
-  axis.ticks = element_blank())  
-
-# Cashflow of the garden option with formal STEM education
-source("functions/plot_cashflow.R")
-plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
-              cashflow_var_name = "Cashflow_garden_STEM", 
-              facet_labels = "STEM Garden")
-
-# # manually share axis label (not a feature of patchwork)
-# 
-# ylab <- plot_cashflow_garden$labels$y
-# plot_cashflow_garden$labels$y <- plot_cashflow_STEM$labels$y <- " "
-# 
-# h_patch <- plot_cashflow_garden / plot_cashflow_STEM 
-# # Use the tag label as a y-axis label
-# wrap_elements(h_patch) +
-#   labs(tag = "Cashflow") +
-#   theme(
-#     plot.tag = element_text(size = rel(1), angle = 90),
-#     plot.tag.position = "left"
-#   )
-
-plot_cashflow_garden / plot_cashflow_STEM
-
-ggsave("figures/Fig_9_cashflow.png", width=5, height=5) 
-
-```
 
 ## Pareto-optimal solutions 
 
-These figures display the Pareto-optimal solutions, representing the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
+Our Pareto-optimal solutions represent the best trade-offs among the objectives of biodiversity, child health, and economic return. By focusing on these Pareto-optimal points, the analysis highlights solutions where improvements in one objective cannot be achieved without some compromise in at least one other. 
 
-Private schools Pareto-optimal solutions:
+```{r pareto-optimal}
+source("pareto/plot_pareto_scenarios.R")
 
-```{r plot_pareto_private}
-source("functions/plot_pareto.R")
-private_pareto <- plot_pareto(
-  economic_return_garden = garden_simulation_results$y$NPV_garden,
-  health_garden = garden_simulation_results$y$health,
-  biodiversity_garden = garden_simulation_results$y$biodiversity,
-  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
-  health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity, 
-  plot_return = "scatter" 
-)
+final_plot
 
-ggplotly(private_pareto) 
+# Save the plot
+ggsave("figures/Figure_8_pareto_fronts.png", final_plot, width = 10, height = 8, bg = "white")
 
 ```
 
-<!-- ![](figures/private_pareto_scatter.png) ![](figures/private_pareto_surface.png) -->
+Controllable variables included:
 
-```{r image_grobs_pareto_private, fig.show = "hold", out.width = "50%", fig.align = "default"}
+```{r pareto-controllable}
+estimates = read.csv("data/inputs_school_garden.csv")
+estimates = estimates[estimates$variable !="", ]
 
-knitr::include_graphics("figures/private_pareto_scatter.png")
+estimates[estimates$control_status == "controllable", ]
 
-knitr::include_graphics("figures/private_pareto_surface.png")
+```
+Variables that are considered out of the control of the decision maker included:
+
+```{r pareto_uncontrolled}
+estimates[estimates$control_status != "controllable", ]
 
 ```
 
-Private school Pareto-optimal solutions interpretation:
+# Summarize objective results for the Pareto
 
-```{r pareto_posthoc_private}
+An `rmoo::summary` of the values resulting from the `rmoo::nsga2` minimization of a fitness function using non-dominated sorting genetic algorithms - II (NSGA-IIs). Multiobjective evolutionary algorithms with 500 random draws with the `decisionSupport::random` 200 100 a population size of 200  and 100 iterations (or 'generations' `maxiter`) in `rmoo::nsga2`.  
 
-source("functions/pareto_posthoc.R")
-private_pareto_posthoc <- pareto_posthoc(
-  economic_return_garden = garden_simulation_results$y$NPV_garden,
-  health_garden = garden_simulation_results$y$health,
-  biodiversity_garden = garden_simulation_results$y$biodiversity,
-  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM,
-  health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity 
-)
-private_pareto_posthoc
+Load the results of a multi-objective optimization run with `load`, including the fitness values and population of solutions. Display the optimal results with `rmoo::summary`. The final `result@fitness` contains the fitness values for all solutions in the final generation of the optimization. The `rmoo:non_dominated_fronts()` identifies which solutions are Pareto-optimal. The `sweep` Filters the rescaled fitness matrix `mat` to retain only the Pareto-optimal solutions `front1_set` indices of Pareto-optimal solutions from `mat2` that includes only these Pareto-optimal solutions. For example, if `mat2` has 200 rows, but `front1_set` contains 24 indices, `set1` will be a 24×3 matrix.
+
+```{r pareto_create_set}
+load(file="data/optimization_results/private_nostem_500_200_100.RData")
+#  loads the previously saved result object from an .RData file.
+rmoo::summary(result) 
+mat = result@fitness 
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set1 = mat2[front1_set, ]
+```
+
+## Example of Economic and Biodivesity options with Pareto optimal solutions
+
+```{r pareto_jitter}
+# Import from saved .RData (takes a long time to run)
+load(file="data/optimization_results/private_stem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set2_1 = mat2[front1_set, ]
+set2 = set2_1[set2_1[, 1]>0, ]
+
+df_results <- as.data.frame(sweep(-mat, 2, c(100, 1, 100), `*`))
+colnames(df_results) <- c("Economic", "Biodiversity", "Health")
+
+df_all_results <- as.data.frame(sweep(-mat, 2, c(100, 1, 100), `*`))
+colnames(df_all_results) <- c("Economic", "Biodiversity", "Health")
+
+# Plot all 600 solutions
+ggplot(df_all_results, aes(x = Economic, y = Biodiversity)) +
+  geom_jitter(alpha = 0.5, color = "grey", width = 0.2, height = 0.2) +  # Plot all points in grey
+  geom_point(data = df_results, aes(x = Economic, y = Biodiversity), color = "red") +  # Highlight Pareto points in red
+  labs(title = "Economic vs Biodiversity Trade-off", x = "Economic", y = "Biodiversity") +
+  theme_minimal()
 
 ```
 
-Public schools Pareto-optimal solutions: 
+## Plot of all options
 
-```{r plot_pareto_public}
-source("functions/plot_pareto.R")
-public_pareto <- plot_pareto(
-  economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
-  health_garden = garden_simulation_results$y$health,
-  biodiversity_garden = garden_simulation_results$y$biodiversity,
-  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
-  health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity, 
-   plot_return = "scatter" 
-)
+```{r pareto_objective_results}
 
-ggplotly(public_pareto) 
+load(file="data/optimization_results/public_nostem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set3 = mat2[front1_set, ]
+
+load(file="data/optimization_results/public_stem_500_200_100.RData")
+rmoo::summary(result)
+mat = result@fitness
+front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
+set4 = mat2[front1_set, ]
+
+# Plot Pareto results ####
+
+library(plotly)
+library(ggplot2)
+library(cowplot)
+
+pareto_3d_plot <- plot_ly() %>%
+  add_trace(x = set1[,1], y = set1[,2], z = set1[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'blue', size = 5),
+            name = 'private, no STEM') %>%
+  add_trace(x = set2[,1], y = set2[,2], z = set2[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'red', size = 5),
+            name = 'private, STEM') %>%
+  add_trace(x = set3[,1], y = set3[,2], z = set3[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'green', size = 5),
+            name = 'public, no STEM') %>%
+  add_trace(x = set4[,1], y = set4[,2], z = set4[,3],
+            type = "scatter3d", mode = "markers",
+            marker = list(color = 'orange', size = 5),
+            name = 'public, STEM') %>%
+  layout(scene = list(xaxis = list(title = 'economic'),
+                      yaxis = list(title = 'biodiversity'),
+                      zaxis = list(title = 'health')))
+
+# pareto_3d_plot
 
 ```
 
-<!-- copy and store locally for hosted page -->
- <!-- ![](figures/public_pareto_scatter.png) ![](figures/public_pareto_surface.png) -->
-
-```{r image_grobs_pareto_public, fig.show = "hold", out.width = "50%", fig.align = "default"}
-
-knitr::include_graphics("figures/public_pareto_scatter.png")
-
-knitr::include_graphics("figures/public_pareto_surface.png")
-
-```
-
-Public school Pareto-optimal solutions interpretation:
-
-```{r pareto_posthoc_public}
-
-source("functions/pareto_posthoc.R")
-public_pareto_posthoc <- pareto_posthoc(
-  economic_return_garden = garden_simulation_results$y$NPV_garden_public_school,
-  health_garden = garden_simulation_results$y$health,
-  biodiversity_garden = garden_simulation_results$y$biodiversity,
-  economic_return_STEM = garden_simulation_results$y$NPV_garden_STEM_public_school,
-  health_STEM = garden_simulation_results$y$health_STEM,
-  biodiversity_STEM = garden_simulation_results$y$biodiversity
-)
-public_pareto_posthoc
-
-```
+![Pareto](figures/pareto_screenshot.png)
 
 ## Input data for the simulations 
 
@@ -563,6 +593,8 @@ mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7]) #, 21:30, 3
 # a summary table with missing, mean, median and sd
 
 ```
+
+
 
 The table shows the variable name, the plot overview as well as the number of missing values, the mean, median and the standard deviation of the distribution for variables that calculated in the model.
 
