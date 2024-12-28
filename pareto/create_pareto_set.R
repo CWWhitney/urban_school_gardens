@@ -1,30 +1,46 @@
+# Creating Pareto Sets
+# Include the MC model of the garden options
 source("Garden_Model.R")
 
+# Create estimates
 estimates = read.csv("data/inputs_school_garden.csv")
 estimates = estimates[estimates$variable !="", ]
 
+# Divides variables into controllable (modifiable by decision-makers) 
+# and uncontrollable (external or stochastic factors).
 controllable_estimates = estimates[estimates$control_status == "controllable", ]
 uncontrollable_estimates = estimates[estimates$control_status != "controllable", ]
 
+# determine number of runs for the optimization test 
 n_mc_runs = 500
 
+# placeholder variables
 money = c()
 biodiversity = c()
 health = c()
-
 #NPV_garden_public_school = c()
 #NPV_garden_STEM_public_school = c()
+
+# Use estimate_read_csv to create a set of estimates
 est = decisionSupport::estimate_read_csv(paste("data/inputs_school_garden.csv",sep=""))
 
+# Random draw from estimates
 mc_draws <- decisionSupport::random(rho=est,n=n_mc_runs)
 
+# Placeholder vector
 decision_vars = vector()
 
+# Placeholders
 lower = c()
 upper = c()
 is_binary = c()
 decision_var_names = c()
 
+# Initializes decision_vars and assigns bounds for each controllable variable
+# based on input distributions Binary variables (e.g., yes/no decisions) are
+# bounded between 0 and 1. Continuous variables are assigned bounds derived from
+# lower and upper in the input data. These variables will be optimized
+# to evaluate Pareto-optimal trade-offs.
 for (i in 1:nrow(controllable_estimates)) {
     if(controllable_estimates$distribution[i] == "tnorm_0_1"){
         val = 1
@@ -41,6 +57,11 @@ for (i in 1:nrow(controllable_estimates)) {
     decision_var_names = append(decision_var_names, controllable_estimates$variable[i])
 }
 
+# Controllable variables assigned values from the decision vector
+# Uncontrollable variables are drawn stochastically from mc_draws. 
+# Runs the school_garden_function for each iteration, appending
+# results to money, biodiversity, and health. Returns the negative mean
+# of each objective (scaled), as NSGA-II minimizes objectives.
 fitness <- function(decision_vars) {
     for (mc_i in 1:n_mc_runs){
         for (i in 1:nrow(controllable_estimates)) {
@@ -66,8 +87,6 @@ fitness <- function(decision_vars) {
 }
 
 fitness(decision_vars)
-
-decision_vars
 
 # Custom population function
 my_population <- function(object) {
@@ -178,6 +197,11 @@ my_crossover <- function(object, parents) {
     ))
 }
 
+# Optimizes for three objectives: economic return (money), biodiversity, and
+# health. Population-based algorithm with 200 'individuals' over 100 'generations'
+
+library(rgl)
+
 result <- rmoo::nsga2(
     type = "real-valued",
     fitness = fitness,
@@ -194,12 +218,15 @@ result <- rmoo::nsga2(
 )
 
 
-
-
 library(plotly)
 
 load(file="data/optimization_results/private_nostem_500_200_100.RData")
 rmoo::summary(result)
+
+# Extracts Pareto-optimal solutions and scales results for interpretation.
+# Filters solutions that cannot be improved in one
+# objective without worsening another.
+
 mat = result@fitness
 front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
@@ -269,39 +296,40 @@ pairs <- unique(t(apply(pairs, 1, sort)))               # Get unique pairs
 pairs <- as.data.frame(pairs)
 colnames(pairs) <- c("Col1", "Col2")
 
+# Create plots ####
 
-get_legend <- function(my_plot) {
-  g <- ggplotGrob(my_plot)
-  legend <- g$grobs[which(sapply(g$grobs, function(x) x$name) == "guide-box")]
-  return(legend)
-}
-
-
-# Generate scatterplots without individual legends
-plots <- lapply(1:nrow(pairs), function(i) {
-  ggplot(df_combined, aes_string(x = pairs$Col1[i], y = pairs$Col2[i], color = "option")) +
-    geom_point() +
-    #labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i])) +
-    scale_color_manual(values = c("private, no STEM" = "blue", "private, STEM" = "orange",
-                                  "public, no STEM" = "darkgreen", "public, STEM" = "red")) +  # Custom colors
-    theme_minimal() +
-    theme(legend.position = "none")  # Remove individual legends
-})
-
-df_combined$Dataset = factor(df_combined$option)
-
-
-# Combine plots and the single legend
-combined_plot <- plot_grid(
-  plot_grid(plotlist = plots, ncol = 2),  # Arrange plots
-  ncol = 1,
-  rel_heights = c(4, 0.5)  # Adjust space for the legend
-)
-ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
-
-
-
-write.table(set1, file="data/optimization_results/set1.csv")
-write.table(set2, file="data/optimization_results/set2.csv")
-write.table(set3, file="data/optimization_results/set3.csv")
-write.table(set4, file="data/optimization_results/set4.csv")
+# get_legend <- function(my_plot) {
+#   g <- ggplotGrob(my_plot)
+#   legend <- g$grobs[which(sapply(g$grobs, function(x) x$name) == "guide-box")]
+#   return(legend)
+# }
+# 
+# 
+# # Generate scatterplots without individual legends
+# plots <- lapply(1:nrow(pairs), function(i) {
+#   ggplot(df_combined, aes_string(x = pairs$Col1[i], y = pairs$Col2[i], color = "option")) +
+#     geom_point() +
+#     #labs(title = paste(pairs$Col1[i], "vs", pairs$Col2[i])) +
+#     scale_color_manual(values = c("private, no STEM" = "blue", "private, STEM" = "orange",
+#                                   "public, no STEM" = "darkgreen", "public, STEM" = "red")) +  # Custom colors
+#     theme_minimal() +
+#     theme(legend.position = "none")  # Remove individual legends
+# })
+# 
+# df_combined$Dataset = factor(df_combined$option)
+# 
+# 
+# # Combine plots and the single legend ####
+# combined_plot <- plot_grid(
+#   plot_grid(plotlist = plots, ncol = 2),  # Arrange plots
+#   ncol = 1,
+#   rel_heights = c(4, 0.5)  # Adjust space for the legend
+# )
+# ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
+# 
+# 
+# # Write scenarios ####
+# write.table(set1, file="data/optimization_results/set1.csv")
+# write.table(set2, file="data/optimization_results/set2.csv")
+# write.table(set3, file="data/optimization_results/set3.csv")
+# write.table(set4, file="data/optimization_results/set4.csv")
