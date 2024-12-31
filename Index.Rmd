@@ -464,7 +464,7 @@ source("pareto/plot_pareto_scenarios.R")
 final_plot
 
 # Save the plot
-ggsave("figures/Figure_8_pareto_fronts.png", final_plot, width = 10, height = 8, bg = "white")
+ggsave("figures/Fig_8_pareto_fronts.png", final_plot, width = 10, height = 8, bg = "white")
 
 ```
 
