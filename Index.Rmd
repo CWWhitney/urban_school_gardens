@@ -90,7 +90,7 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
                    new_names = c("NPV private school passive garden","NPV private school STEM garden", "NPV public school passive garden", "NPV public school STEM garden"),
                                     method = "boxplot", 
                                     base_size = 11, 
-                                    x_axis_name = "Comparative NPV outcomes")
+                                    x_axis_name = "Comparative NPV outcomes (million VND)")
 
 ggsave("figures/Fig_5_Boxplots.png", width = 15, height = 8, units = "cm")
 ```
@@ -178,7 +178,8 @@ source("functions/plot_cashflow.R")
 plot_cashflow_garden <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
               cashflow_var_name = "Cashflow_garden", 
               facet_labels = "Passive garden") + 
-  theme(legend.position = "none", axis.title.x = element_blank(), 
+  theme(legend.position = "none", axis.title.y = element_blank(),
+        axis.title.x = element_blank(), 
   axis.text.x = element_blank(),
   axis.ticks = element_blank())  
 
@@ -186,7 +187,8 @@ plot_cashflow_garden <- plot_cashflow(mcSimulation_object = garden_simulation_re
 source("functions/plot_cashflow.R")
 plot_cashflow_STEM <- plot_cashflow(mcSimulation_object = garden_simulation_results, 
               cashflow_var_name = "Cashflow_garden_STEM", 
-              facet_labels = "STEM garden")
+              facet_labels = "STEM garden")+
+  labs(y = "Cashflow (million VND)") 
 
 # # manually share axis label (not a feature of patchwork)
 # 
