@@ -33,15 +33,18 @@ plot_pareto <- function(x, y, data, colors) {
   ggplot(data, aes_string(x = x, y = y, color = "Scenario")) +
     geom_point(alpha = 0.7, size = 3) +
     scale_color_manual(values = colors) +
-    theme_minimal(base_size = 20) +
+    theme_minimal(base_size = 14) +
     theme(legend.position = "none") +
     labs(x = x, y = y)
 }
 
 # Generate individual plots for each pair of objectives
-plot1 <- plot_pareto("Economic", "Biodiversity", data, colors)
-plot2 <- plot_pareto("Economic", "Health", data, colors)
-plot3 <- plot_pareto("Biodiversity", "Health", data, colors)
+plot_econ_bio <- plot_pareto("Economic", "Biodiversity", data, colors) +
+  labs(x = "Economic (million VND)", y= "Biodiversity (million VND)") 
+plot_econ_health <- plot_pareto("Economic", "Health", data, colors)+
+  labs(x = "Economic (million VND)", y= "Health million VND") 
+plot_bio_health <- plot_pareto("Biodiversity", "Health", data, colors)+
+  labs(x = "Biodiversity (million VND)", y= "Health (million VND)") 
 
 # Extract legend from one plot 
 # Create a base plot to extract the legend
@@ -56,10 +59,14 @@ legend <- cowplot::get_legend(base_plot)
 
 # Arrange plots and legend
 final_plot <- cowplot::plot_grid(
-  plot1, 
+  plot_econ_bio + theme(axis.text.x = element_blank(),
+                        axis.ticks.x = element_blank(),
+                        axis.title.x = element_blank() ), 
   legend,
-  plot2, 
-  plot3, 
+  plot_econ_health, 
+  plot_bio_health + theme(axis.text.y = element_blank(),
+                          axis.ticks.y = element_blank(),
+                          axis.title.y = element_blank() ), 
   ncol = 2, 
   nrow = 2, 
   rel_widths = c(1, 1), 
