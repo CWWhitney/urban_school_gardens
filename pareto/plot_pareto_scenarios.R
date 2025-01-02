@@ -1,7 +1,10 @@
 # Plot Pareto optimal scenarios in R 
 
 library(ggplot2)
+library(RColorBrewer)
 library(gridExtra)
+
+CMAP <- "Set1"
 
 # Load the data
 set1 <- read.csv("data/optimization_results/set1.csv", sep = " ")
@@ -32,7 +35,7 @@ colors <- c("Private, Passive garden" = "blue",
 plot_pareto <- function(x, y, data, colors) {
   ggplot(data, aes_string(x = x, y = y, color = "Scenario")) +
     geom_point(alpha = 0.7, size = 3) +
-    scale_color_manual(values = colors) +
+  scale_color_brewer(palette = CMAP) +
     theme_minimal(base_size = 14) +
     theme(legend.position = "none") +
     labs(x = x, y = y)
@@ -50,7 +53,7 @@ plot_bio_health <- plot_pareto("Biodiversity", "Health", data, colors)+
 # Create a base plot to extract the legend
 base_plot <- ggplot(data, aes(x = Economic, y = Biodiversity, color = Scenario)) +
   geom_point(alpha = 0.7, size = 3) +
-  scale_color_manual(values = colors) +
+  scale_color_brewer(palette = CMAP) +
   theme_minimal(base_size = 14) +
   theme(legend.position = "right")
 
