@@ -18,8 +18,6 @@ n_mc_runs = 500
 money = c()
 biodiversity = c()
 health = c()
-#NPV_garden_public_school = c()
-#NPV_garden_STEM_public_school = c()
 
 # Use estimate_read_csv to create a set of estimates
 est = decisionSupport::estimate_read_csv(paste("data/inputs_school_garden.csv",sep=""))
