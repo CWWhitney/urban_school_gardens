@@ -45,7 +45,7 @@ plot_pareto <- function(x, y, data, colors) {
 plot_econ_bio <- plot_pareto("Economic", "Biodiversity", data, colors) +
   labs(x = "Economic (million VND)", y= "Biodiversity (million VND)") 
 plot_econ_health <- plot_pareto("Economic", "Health", data, colors)+
-  labs(x = "Economic (million VND)", y= "Health million VND") 
+  labs(x = "Economic (million VND)", y= "Health (million VND)") 
 plot_bio_health <- plot_pareto("Biodiversity", "Health", data, colors)+
   labs(x = "Biodiversity (million VND)", y= "Health (million VND)") 
 
