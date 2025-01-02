@@ -20,7 +20,7 @@ set4$Scenario <- "Public, STEM garden"
 
 # Combine all datasets
 data <- rbind(set1, set2, set3, set4)
-data$Scenario <- factor(data$Scenario, levels = names(colors))
+data$Scenario <- factor(data$Scenario)
 
 # Rename columns for clarity
 colnames(data)[1:3] <- c("Economic", "Biodiversity", "Health")
