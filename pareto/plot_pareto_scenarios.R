@@ -75,4 +75,3 @@ final_plot <- cowplot::plot_grid(
   rel_widths = c(1, 1), 
   rel_heights = c(1, 1)
 )
-
