@@ -502,6 +502,7 @@ mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set1 = mat2[front1_set, ]
 ```
 
+<!--
 ## Example of Economic and Biodivesity options with Pareto optimal solutions
 
 ```{r pareto_jitter}
@@ -528,6 +529,7 @@ ggplot(df_all_results, aes(x = Economic, y = Biodiversity)) +
   theme_minimal()
 
 ```
+-->
 
 ## Plot of all options
 
