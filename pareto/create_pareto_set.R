@@ -340,7 +340,7 @@ combined_plot <- plot_grid(
   ncol = 1,
   rel_heights = c(4, 0.5)  # Adjust space for the legend
 )
-ggsave("scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
+ggsave("figures/scatterplot_four_matrices.png", combined_plot, width = 8, height = 6, bg = 'white')
 
 
 # Write scenarios ####
