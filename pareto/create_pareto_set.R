@@ -86,7 +86,7 @@ fitness <- function(decision_vars) {
 
 fitness(decision_vars)
 
-# Custom population function
+# Custom function for generating intitial population
 my_population <- function(object) {
   print("Create population")
   # Validate input dimensions
@@ -115,6 +115,8 @@ my_population <- function(object) {
   }
   return(population)
 }
+
+# Custom function for mutation operation
 binary_mutation_rate = 0.1
 continuous_mutation_std = 0.1
 my_mutation <- function(object, parent_idx) {
@@ -147,6 +149,7 @@ my_mutation <- function(object, parent_idx) {
   return(child)
 }
 
+# Custom function for crossover operation
 crossover_rate = 0.8
 my_crossover <- function(object, parents) {
   # Extract attributes
@@ -195,11 +198,10 @@ my_crossover <- function(object, parents) {
     ))
 }
 
-# Optimizes for three objectives: economic return, biodiversity, and health
-# Population-based algorithm with 200 'individuals' over 100 'generations'
-
 library(rgl)
 
+# Optimizes for three objectives: economic return, biodiversity, and health
+# Population-based algorithm with 200 'individuals' over 100 'generations'
 result <- rmoo::nsga2(
     type = "real-valued",
     fitness = fitness,
