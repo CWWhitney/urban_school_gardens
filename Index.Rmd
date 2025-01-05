@@ -9,7 +9,9 @@ output:
 library(knitr)
 knitr::opts_chunk$set(echo = TRUE,
                out.width = "75%", 
-               fig.align = "center")
+               fig.align = "center", 
+               warning = FALSE, 
+               message = FALSE) 
 
 library(akima)
 library(decisionSupport)
@@ -344,7 +346,7 @@ public_pls <- plot_pls_garden / plot_pls_STEM + theme(legend.position = "none", 
 public_pls /
 plot_pls_garden_public / plot_pls_public_STEM + plot_layout(heights = c(6, 6, 7, 8))
 
-ggsave("figures/Fig_7_VIP.png", width=8, height=6) 
+ggsave("figures/Fig_7_VIP.png", width=8, height=7) 
 
 ```
 
@@ -371,7 +373,7 @@ Calculate EVPI:
 ```{r evpi-general_calc}
 source("functions/multi_EVPI_test.R")
 # evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden_inclusive")
-# save as a local .csv (takes ~ 15 minutes to run this)
+# # save as a local .csv (takes ~ 15 minutes to run this)
 # save(evpi,file="data/data_evpi.Rda")
  load("data/data_evpi.Rda")
 # open from saved file (last model run) - it is stable result / takes very long to run 
@@ -383,25 +385,25 @@ EVPI for private schools:
 ```{r evpi_private_1}
 #Value of information the garden intervention decision
   source("functions/plot_evpi.R")
-#plot_evpi_garden <- plot_evpi(EVPIresults = evpi, 
-  #                             decision_vars = "NPV_garden_inclusive", 
-  #                             new_names = "Garden",
-  #                           input_table = input_table, 
-  #                           threshold = 10) +
-  # theme(legend.position = "none", axis.title.x = element_blank(), 
-  # axis.text.x = element_blank(),
-  # axis.ticks = element_blank()) + 
-  # scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school) 
+# plot_evpi_garden <- plot_evpi(EVPIresults = evpi,
+#                             decision_vars = "NPV_garden_inclusive",
+#                             new_names = "Garden",
+#                           input_table = input_table,
+#                           threshold = 10) +
+# theme(legend.position = "none", axis.title.x = element_blank(),
+# axis.text.x = element_blank(),
+# axis.ticks = element_blank()) +
+# scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school)
 ```
 
 ```{r evpi_private_2}
 # Value of information for the garden option with formal STEM education.
 # using the results of the same multi_EVPI
-# plot_evpi_STEM <- plot_evpi(EVPIresults = evpi, 
-#                             decision_vars = "NPV_garden_STEM_inclusive", 
+# plot_evpi_STEM <- plot_evpi(EVPIresults = evpi,
+#                             decision_vars = "NPV_garden_STEM_inclusive",
 #                             new_names = "STEM garden",
-#                             input_table = input_table, 
-#                             threshold = 10) + scale_x_continuous(limits = c(0, 210)) 
+#                             input_table = input_table,
+#                             threshold = 10) + scale_x_continuous(limits = c(0, 210))
 
 # plot_evpi_garden / plot_evpi_STEM
 ```
@@ -413,11 +415,11 @@ EVPI for public schools:
 # Value of information for the public school garden option with no formal STEM education.
 
 # using the results of the same multi_EVPI
-# plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school_inclusive", 
-#                             new_names = "Garden", 
-#                             input_table = input_table, 
+# plot_evpi_public <- plot_evpi(evpi, decision_vars = "NPV_garden_public_school_inclusive",
+#                             new_names = "Garden",
+#                             input_table = input_table,
 #                             threshold = 10) +
-#   theme(legend.position = "none", axis.title.x = element_blank(), 
+#   theme(legend.position = "none", axis.title.x = element_blank(),
 #   axis.text.x = element_blank(),
 #   axis.ticks = element_blank()) + 
 #   scale_x_continuous(limits = c(0, 210)) + ggtitle(label_public_school) #210

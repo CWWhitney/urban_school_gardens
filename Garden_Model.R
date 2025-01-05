@@ -39,6 +39,8 @@ school_garden_function <- function(x, varnames){
   }
   
   ## Garden establishment ####
+  # Garden establishment has standard costs up to a size and then some of the costs can get 
+  # expensive, like maintenance etc. 
   
   garden_establishment_costs <- compost_starting + # getting started with the compost
     worm_starting + # maintaining the compost and breaking down residue
@@ -46,16 +48,7 @@ school_garden_function <- function(x, varnames){
     equipment_cost + # this is a high value because we may need a lot of equipment, netting, trellis for plants to climb
     # considering the range, this could be simple or a smart system (full automation)... 
     garden_construction_cost  
-  
-  # garden establishment cost values based on garden land area 
-  # gardens are equally expensive but get more expensive if they are really big
- if (size_of_garden > expensive_garden_size) {
-    # of the garden size is large then increase the establishment costs
-    # increase by 
-   garden_establishment_costs <- garden_establishment_costs * cost_increase_expensive_garden_size
-  } else {
-    garden_establishment_costs <- garden_establishment_costs 
-  }
+
   
   ## STEM Garden establishment ####
   #costs if with STEM education
@@ -84,23 +77,25 @@ school_garden_function <- function(x, varnames){
   # Maintenance costs ####
   
   # maintenance costs for the garden (with or without STEM)
+  # these are standard maint. costs and regardless of garden size
   garden_maintenance_cost <-
     maintaining_labor + # technical staff etc
     # 2-3 hours per day to manage a garden of this rough size
     seed_costs + # seeds and seedlings each year
     fertilizer + # EM and other helpers for compost
-    plant_protection  # IPM for plant protection
+    plant_protection   # IPM for plant protection
   
-  # garden maint. cost values based on garden land area 
+  # Additional costs incurred at a m2 basis
+  # garden maintenance cost values based on garden land area 
   # gardens will be equally expensive to maintain (see above)
- if (size_of_garden > expensive_garden_size) {
-    # if the garden size is large then increase the establishment costs
-    # increase by variable cost_increase_expensive_garden_size
-   garden_maintenance_cost <- garden_maintenance_cost * cost_increase_expensive_garden_size
-  } else {
-    garden_maintenance_cost <- garden_maintenance_cost  
-  }
+  garden_maintenance_cost + ((maintaining_labor_m2 + # technical staff etc
+    # 2-3 hours per day to manage a garden of this rough size
+    seed_costs_m2 + # seeds and seedlings each year
+    fertilizer_m2 + # EM and other helpers for compost
+    plant_protection_m2) *  # IPM for plant protection
+    size_of_garden) # multiple these additional area costs by garden size
   
+ 
   ## maintenance costs if with STEM education
   STEM_maintenance_cost <-
     teacher_salary_cost +  # extra costs for teachers to work on the garden
@@ -113,7 +108,8 @@ school_garden_function <- function(x, varnames){
   maintenance_cost_annual <- garden_maintenance_cost +
     # still need children's garden tools, gloves, hoes, basket etc.
     teaching_tools +
-    # annual teacher training just for passive garden activity
+    # annual teacher training 
+    # just 10% of costs for passive garden activity
     annual_teacher_training * 0.1
   
   ## annual maintenance costs if with STEM education
@@ -142,7 +138,7 @@ school_garden_function <- function(x, varnames){
   
   # if including animals garden prices change a bit ####
   # Circular garden with animals, trees, plants, fish (Bac Tom option)
-  annual_livestock_cost  <- vv(livestock_maint, 
+  annual_livestock_cost  <- vv(livestock_maint + ((livestock_maint_m2) * size_of_garden), 
                               var_CV = CV_value, 
                               n = number_of_years, 
                               relative_trend = inflation_rate) #percentage of increase each year
@@ -152,11 +148,26 @@ school_garden_function <- function(x, varnames){
   if (if_animals_included == 1){
     # costs of establishing animals in the garden (small birds, rabbits, fish)
     total_cost_STEM[1] <- total_cost_STEM[1] + livestock_establishment_costs + fishpond_cost
+    # Running costs
+    total_cost_STEM <- total_cost_STEM + livestock_maint + (livestock_maint_m2 * size_of_garden)
     total_cost[1] <- total_cost[1] + livestock_establishment_costs + fishpond_cost
+    total_cost <- total_cost + livestock_maint + (livestock_maint_m2 * size_of_garden)
+    # Animals in school gardens can provide many benefits, teaching responsibility
+    # and empathy - reducing stress and anxiety- a connection to nature - can be
+    # used to teach children about sustainability, such as recycling food and
+    # garden waste into compost.
+    if_garden_yield_enough <-  if_garden_yield_enough + manure_yield_effect
+    garden_mental_health_value <- garden_mental_health_value + livestock_mental_health_effect
   } else {
     total_cost_STEM = total_cost_STEM
     total_cost = total_cost
+    # Running costs
+    total_cost_STEM
+    total_cost
+    if_garden_yield_enough <- if_garden_yield_enough
+    garden_mental_health_value <- garden_mental_health_value
   }
+  
   # Risks ####
   
   # These are 'ex-ante' risks, or risks understood when making a decision
@@ -193,7 +204,6 @@ school_garden_function <- function(x, varnames){
                         if_reduce_pollution) # offer habitat
   
   # Benefits and Risks ####
-  
   canteen_yes_no <- chance_event(if_school_has_canteen) 
                                  # private schools have but others not so much
                                  # this will change under new decrees and nutrition plans
@@ -286,7 +296,11 @@ school_garden_function <- function(x, varnames){
   # they come to the school and take part in school events
   # the school benefits from the event by selling products
   # maybe products from the garden or increased sales of other school products
-  community_value <-  vv(school_event_value * school_event_freq, # i.e. seedlings for sale
+  # school event value per event minus costs per event
+  school_event_total <- (school_event_value * school_event_freq) - 
+    (school_event_mgmt_cost * school_event_freq)
+  
+  community_value <-  vv(school_event_total, # i.e. seedlings for sale
                          CV_value, 
                          number_of_years, 
                          relative_trend = inflation_rate) * community_risk
