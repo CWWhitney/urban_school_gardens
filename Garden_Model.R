@@ -208,7 +208,12 @@ school_garden_function <- function(x, varnames){
                                  # private schools have but others not so much
                                  # this will change under new decrees and nutrition plans
   
-  # parents pay for the canteen food / the school will sell to parents
+  # sale of yields depends on the size of the garden
+  sale_of_yield <- sale_of_yield_m2 * size_of_garden
+  # Savings in the canteen also depends on the size of the garden
+  canteen_savings <- canteen_savings_m2 * size_of_garden
+  
+  # Save money on canteen food / the school will sell to parents
    if (canteen_yes_no == 1) {
     # sell some and eat rest in canteen 
      harvest_value = vv(canteen_savings + sale_of_yield, CV_value, 
@@ -217,7 +222,7 @@ school_garden_function <- function(x, varnames){
                        relative_trend = inflation_rate) * garden_function_risk 
                            # account for risk that the garden is not fully functional
   } else {
-    # just sell, never eat in the canteen
+    # just sell to parents, never eat in the canteen
     # same for no STEM and STEM
     harvest_value = vv(sale_of_yield, CV_value, 
                        number_of_years, 
@@ -329,7 +334,7 @@ school_garden_function <- function(x, varnames){
   # Health related values ####
   # These are critical and extremely important but also somewhat intangible
   # here we determine the value of vegetable access with some proxy values
-  child_veg_access <- child_veg_health_care_savings + 
+  value_of_child_veg_access <- child_veg_health_care_savings + 
     # access to and consumption of safe food (i.e. vegetables) from the garden
     # can lead to better performance
     child_veg_school_performance_value + 
@@ -346,7 +351,7 @@ school_garden_function <- function(x, varnames){
                           
   # Need to consider these values carefully as they differ between options
   # health benefits from gardens no STEM
-  health_value <- child_veg_access + 
+  health_value <- value_of_child_veg_access + 
     child_healthier_choices  + 
     garden_mental_health_value 
   # can be expanded to include more: children, 
@@ -366,7 +371,7 @@ school_garden_function <- function(x, varnames){
   # Assuming more formal STEM education time in the garden leads to 
   # better health choices but does not change access (same garden)
       
-  health_value_STEM <- child_veg_access + 
+  health_value_STEM <- value_of_child_veg_access + 
                         child_healthier_choices_STEM  + 
                         garden_mental_health_value
   
@@ -378,14 +383,14 @@ school_garden_function <- function(x, varnames){
   # Here we also get abstract, we care about green space and pollution reduction
   
   environmental_value <- 
-    green_space_eco_value + # we care about the green space
+    (green_space_eco_value_m2 + # we care about the green space
     # citizens pay more to live close to green spaces
     # cities like Hanoi spend money on planting and maintaining parks and trees
     # - improve mental and physical health
     # - provide opportunities for physical activity and social interaction
     # - public green spaces have been linked to lower crime rates
     
-    reduce_pollution_value 
+    reduce_pollution_value_m2) * size_of_garden
     # i.e. improved air quality/ filter pollutants from the air
     # improving air quality and reducing the risk of respiratory problems
     # especially important in urban areas, where air pollution is high 
@@ -408,8 +413,7 @@ school_garden_function <- function(x, varnames){
   # assuming it could be a green space
   # low chance since land is needed in the city
   
-  environmental_value_of_fallow_green_space <- (green_space_eco_value + 
-                                                  reduce_pollution_value) * 
+  environmental_value_of_fallow_green_space <- (environmental_value) * 
     # fallow green space is less valuable than managed garden green space by x amount
                                                   fallow_eco_reduction
   
