@@ -54,8 +54,9 @@ annual_teacher_training,5,,276,posnorm,Mainitaining teacher training (million VN
 ,,,,,,
 if_school_has_canteen,0.2,,0.5,tnorm_0_1,Chance that the school has a canteen (%),controllable
 canteen_savings,1,,5,posnorm,Canteen savings (million VND/yr),uncertain
+canteen_savings_m2,0.01,,0.05,posnorm,Canteen savings per m2 (million VND/yr),uncertain
 sale_of_yield,10,,30,posnorm,Sales of garden products (million VND/yr),uncertain
-,,,,,,
+sale_of_yield_m2,0.1,,0.3,posnorm,Sales of garden products per m2 (million VND/yr),uncertain
 extra_cirricular_savings,20,,100,posnorm,Savings from extra-cirriclar activities (million VND/year),uncertain
 formal_edu_savings,1,,3,posnorm,Savings on formal education costs (no STEM garden) (million VND/year),uncertain
 formal_edu_savings_STEM,20,,100,posnorm,Savings on STEM formal education costs (million VND/year),uncertain
@@ -81,7 +82,10 @@ child_STEM_school_performance_value,2,,100,posnorm,School performance value (chi
 child_STEM_community_engagement_value,10,,250,posnorm,Community engagement value (children) STEM garden (million VND/year),uncertain
 ,,,,,,
 green_space_eco_value,1,,10,posnorm,Value of green space (million VND/year),uncertain
-reduce_pollution_value,1,,3,posnorm,Value of reduced polution on school garden (million VND/year),uncertain
+green_space_eco_value_m2,0.01,,0.1,posnorm,Value of green space per m2 (million VND/year),uncertain
+reduce_pollution_value,1,,3,posnorm,Value of reduced polution by school garden (million VND/year),uncertain
+reduce_pollution_value_m2,0.01,,0.03,posnorm,Value of reduced polution by school garden per m2 (million VND/year),uncertain
+,,,,,,
 chance_garden_is_fallow_green_space,0.001,,0.05,tnorm_0_1,Chance that the garden space is fallow green space (%),uncertain
 fallow_eco_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace compared to garden (%),uncertain
 green_space_health_value,1,,10,posnorm,Value of non-garden green space for child health (million VND/year),uncertain
