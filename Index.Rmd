@@ -371,9 +371,9 @@ mcSimulation_table <- mcSimulation_table %>% select(-all_of(npvs_to_move), all_o
 Calculate EVPI:
 
 ```{r evpi-general_calc}
-source("functions/multi_EVPI_test.R")
+# source("functions/multi_EVPI_test.R")
 # evpi <- multi_EVPI_test(mc = mcSimulation_table, first_out_var = "NPV_garden_inclusive")
-# # save as a local .csv (takes ~ 15 minutes to run this)
+#  # save as a local .csv (takes ~ 15 minutes to run this)
 # save(evpi,file="data/data_evpi.Rda")
  load("data/data_evpi.Rda")
 # open from saved file (last model run) - it is stable result / takes very long to run 
@@ -393,7 +393,7 @@ EVPI for private schools:
 # theme(legend.position = "none", axis.title.x = element_blank(),
 # axis.text.x = element_blank(),
 # axis.ticks = element_blank()) +
-# scale_x_continuous(limits = c(0, 210)) + ggtitle(label_private_school)
+# scale_x_continuous(limits = c(0, 210))
 ```
 
 ```{r evpi_private_2}
@@ -401,10 +401,9 @@ EVPI for private schools:
 # using the results of the same multi_EVPI
 # plot_evpi_STEM <- plot_evpi(EVPIresults = evpi,
 #                             decision_vars = "NPV_garden_STEM_inclusive",
-#                             new_names = "STEM garden",
+#                             new_names = "STEM garden pivate school",
 #                             input_table = input_table,
-#                             threshold = 10) + scale_x_continuous(limits = c(0, 210))
-
+#                             threshold = 10) + scale_x_continuous(limits = c(0, 30)) # + ggtitle(label_private_school)
 # plot_evpi_garden / plot_evpi_STEM
 ```
 
@@ -421,8 +420,8 @@ EVPI for public schools:
 #                             threshold = 10) +
 #   theme(legend.position = "none", axis.title.x = element_blank(),
 #   axis.text.x = element_blank(),
-#   axis.ticks = element_blank()) + 
-#   scale_x_continuous(limits = c(0, 210)) + ggtitle(label_public_school) #210
+#   axis.ticks = element_blank())  +
+#   scale_x_continuous(limits = c(0, 30))
 
 ```
 
@@ -431,13 +430,11 @@ EVPI for public schools:
 # Value of information for the public school garden option with formal STEM education.
 # using the results of the same multi_EVPI
 plot_evpi_public_STEM <- plot_evpi(evpi, decision_vars = "NPV_garden_STEM_public_school_inclusive", 
-                            new_names = "STEM garden",
+                            new_names = "STEM garden public school",
                             input_table = input_table, 
-                            threshold = 10) # + 
-#  scale_x_continuous(limits = c(0, 210))  #210
+                            threshold = 10)  + 
+  scale_x_continuous(limits = c(0, 30)) # + ggtitle(label_public_school)
 plot_evpi_public_STEM
-# plot_evpi_public / plot_evpi_public_STEM
-
 ```
 
 <!-- Exclude the specific EVPI figure generation from supplementary but keep the general build up of the figure -->
@@ -446,12 +443,19 @@ plot_evpi_public_STEM
 
 # Generate figure
 # private and public schools EVPI
-# public_evpi_together <- plot_evpi_garden / plot_evpi_STEM + 
-#   theme(legend.position = "none", axis.title.x = element_blank(), 
+# public_evpi_together <- plot_evpi_garden / plot_evpi_STEM +
+#   theme(legend.position = "none", axis.title.x = element_blank(),
 #   axis.text.x = element_blank(),
-#   axis.ticks = element_blank())  
+#   axis.ticks = element_blank())
 
 # public_evpi_together / plot_evpi_public / plot_evpi_public_STEM + plot_layout(heights = c(0.2, 0.4, 0.3, 0.4))
+
+# plot_evpi_STEM <- plot_evpi_STEM +
+#  theme(legend.position = "none", axis.title.x = element_blank(),
+# axis.text.x = element_blank(),
+# axis.ticks = element_blank())
+# 
+# plot_evpi_STEM / plot_evpi_public_STEM
 
 # ggsave("figures/Fig_8_EVPI.png", width=9, height=13) 
 
