@@ -12,6 +12,17 @@ set2 <- read.csv("data/optimization_results/set2.csv", sep = " ")
 set3 <- read.csv("data/optimization_results/set3.csv", sep = " ")
 set4 <- read.csv("data/optimization_results/set4.csv", sep = " ")
 
+# Filter outliers
+set1 <- set1[set1$V1 > 0, ]
+set2 <- set2[set2$V1 > 0, ]
+set3 <- set3[set3$V1 > 0, ]
+set4 <- set4[set4$V1 > 0, ]
+
+set1 <- set1[set1$V2 > 9.6, ]
+set2 <- set2[set2$V2 > 9.6, ]
+set3 <- set3[set3$V2 > 9.6, ]
+set4 <- set4[set4$V2 > 9.6, ]
+
 # Add scenario labels
 set1$Scenario <- "Private, Passive garden"
 set2$Scenario <- "Private, STEM garden"
