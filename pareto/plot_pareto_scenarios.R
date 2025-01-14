@@ -87,3 +87,11 @@ final_plot <- cowplot::plot_grid(
   rel_widths = c(1, 1), 
   rel_heights = c(1, 1)
 )
+
+#final_plot
+#ggsave(
+#  "figures/pareto_new.png",
+#  final_plot,
+#  width = 10,
+#  height = 7,
+#)
