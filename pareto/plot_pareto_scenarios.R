@@ -48,6 +48,7 @@ plot_pareto <- function(x, y, data, colors) {
     geom_point(alpha = 0.7, size = 3) +
   scale_color_brewer(palette = CMAP) +
     theme_minimal(base_size = 14) +
+    theme_gray() +
     theme(legend.position = "none") +
     labs(x = x, y = y)
 }
