@@ -224,15 +224,15 @@ result <- rmoo::nsga2(
 # Filters solutions that cannot be improved in one
 # objective without worsening another.
 
-load(file="data/optimization_results/private_nostem_500_200_100.RData")
+load(file="data/optimization_results/result_nostem_priv_new.RData")
 #  loads the previously saved result object from an .RData file. The object
 #  contains the results of a multi-objective optimization run, including the
 #  fitness values and population of solutions.
-rmoo::summary(result) # displays a summary of the optimization results
-mat = result@fitness 
+rmoo::summary(result_nostem_priv) # displays a summary of the optimization results
+mat = result_nostem_priv@fitness 
 # contains the fitness values for all solutions in the final 
 # generation of the optimization
-front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+front1_set = rmoo::non_dominated_fronts(result_nostem_priv)$fit[[1]]
 # rmoo:non_dominated_fronts()  to identify which solutions are Pareto-optimal
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 # Filters the rescaled fitness matrix (mat2) to retain only the Pareto-optimal solutions.
@@ -243,25 +243,25 @@ mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set1 = mat2[front1_set, ]
 
 # Repeat for other options
-load(file="data/optimization_results/private_stem_500_200_100.RData")
-rmoo::summary(result)
-mat = result@fitness
-front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+load(file="data/optimization_results/result_stem_priv_new.RData")
+rmoo::summary(result_stem_priv)
+mat = result_stem_priv@fitness
+front1_set = rmoo::non_dominated_fronts(result_stem_priv)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set2_1 = mat2[front1_set, ]
 set2 = set2_1[set2_1[, 1]>0, ]
 
-load(file="data/optimization_results/public_nostem_500_200_100.RData")
-rmoo::summary(result)
-mat = result@fitness
-front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+load(file="data/optimization_results/result_nostem_pub_new.RData")
+rmoo::summary(result_nostem_pub)
+mat = result_nostem_pub@fitness
+front1_set = rmoo::non_dominated_fronts(result_nostem_pub)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set3 = mat2[front1_set, ]
 
-load(file="data/optimization_results/public_stem_500_200_100.RData")
-rmoo::summary(result)
-mat = result@fitness
-front1_set = rmoo::non_dominated_fronts(result)$fit[[1]]
+load(file="data/optimization_results/result_stem_pub_new.RData")
+rmoo::summary(result_stem_pub)
+mat = result_stem_pub@fitness
+front1_set = rmoo::non_dominated_fronts(result_stem_pub)$fit[[1]]
 mat2 = sweep(-mat, 2, c(100, 1, 100) , `*`) # retransform
 set4 = mat2[front1_set, ]
 
