@@ -91,9 +91,9 @@ fallow_eco_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace
 green_space_health_value,1,,10,posnorm,Value of non-garden green space for child health (million VND/year),uncertain
 fallow_health_reduction,0.5,,0.8,tnorm_0_1,Proportion of value of fallow greenspace for child heatlh compared to garden (%),uncertain
 ,,,,,,
-school_event_value,10,,200,posnorm,Value of garden related school events (million VND/event),uncertain
+school_event_value,10,,200,posnorm,Value of garden-related school events (million VND/event),uncertain
 school_event_freq,3,,10,posnorm,Number of school events per year (days/year),controllable
-school_event_mgmt_cost,0.5,,10,posnorm,Cost of garden related school events (million VND/event),uncertain
+school_event_mgmt_cost,0.5,,10,posnorm,Cost of garden-related school events (million VND/event),uncertain
 ,,,,,,
 value_of_non_garden_land_use,20,,50,posnorm,"Value of non garden land use, playground etc. (million VND/yr)",uncertain
 if_parking,0.1,,0.8,tnorm_0_1,Chance of including parking on the plot without a garden (%),controllable
