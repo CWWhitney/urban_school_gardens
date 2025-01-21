@@ -485,7 +485,7 @@ school_garden_function <- function(x, varnames){
     # no benefits from STEM
     total_benefit_STEM_public_school <- rep(0, number_of_years)
     total_cost_STEM_public_school <- rep(0, number_of_years)
-    environment_related_value_public_school <- rep(0, number_of_years)
+    environment_related_value <- rep(0, number_of_years)
     health_related_value <- rep(0, number_of_years)
     health_related_value_STEM <- rep(0, number_of_years)
   } else {
@@ -496,7 +496,7 @@ school_garden_function <- function(x, varnames){
     total_benefit_STEM_public_school <- total_benefit_STEM
     total_benefit_STEM_public_school_inclusive <- total_benefit_STEM_inclusive
     total_cost_STEM_public_school <- total_cost_STEM
-    environment_related_value_public_school <- environment_related_value
+    environment_related_value <- environment_related_value
     health_related_value <- health_related_value
     health_related_value_STEM <- health_related_value_STEM
   }
@@ -648,12 +648,7 @@ school_garden_function <- function(x, varnames){
   biodiversity <- 
     discount(x = environment_related_value,
              discount_rate = discount_rate,
-             calculate_NPV = TRUE) 
-  
-  biodiversity_public_school <-  discount(x = environment_related_value_public_school,
-                                          discount_rate = discount_rate,
-                                          calculate_NPV = TRUE) 
-  
+             calculate_NPV = TRUE) #assume the same ecology value
   health <- 
     discount(x = health_related_value,
              discount_rate = discount_rate,
