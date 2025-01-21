@@ -89,12 +89,12 @@ source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
                    vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
                    old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive", "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive"),
-                   new_names = c("NPV private school passive garden","NPV private school STEM garden", "NPV public school passive garden", "NPV public school STEM garden"),
+                   new_names = c("Private school passive garden","Private school STEM garden", "Public school passive garden", "Public school STEM garden"),
                                     method = "boxplot", 
                                     base_size = 11, 
-                                    x_axis_name = "Comparative NPV outcomes (million VND)")
+                                    x_axis_name = "Net Present Value (NPV) outcomes (million VND)")
 
-ggsave("figures/Fig_5_Boxplots.png", width = 15, height = 8, units = "cm")
+ggsave("figures/Fig_3_Boxplots.png", width = 15, height = 8, units = "cm")
 ```
 
 As boxplots and distributions for public schools:
@@ -107,7 +107,7 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
                    new_names = c("NPV public school garden", "NPV public school garden with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7, 
-                                    x_axis_name = "Comparative NPV outcomes")
+                                    x_axis_name = "NPV outcomes")
 ```
 
 As boxplots and distributions for private schools:
@@ -117,10 +117,10 @@ source("functions/plot_distributions.R")
 plot_distributions(mcSimulation_object = garden_simulation_results, 
                                     vars = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
                    old_names = c("NPV_garden_inclusive","NPV_garden_STEM_inclusive"),
-                   new_names = c("NPV private school garden","NPV private school with STEM"),
+                   new_names = c("Private school garden","Private school with STEM"),
                                     method = "boxplot_density", 
                                     base_size = 7, 
-                                    x_axis_name = "Comparative NPV outcomes")
+                                    x_axis_name = "NPV outcomes")
 ```
 
 ## Summary of results for the decision
@@ -128,20 +128,39 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
 Summary of the NPVs for the passive education garden and STEM options for private schools:
 
 ```{r summary_private_decision, warning=FALSE, message=FALSE}
+# Summary for private school passive and STEM gardens
 summary(garden_simulation_results$y[1:2]) #"NPV_garden_inclusive"                    "NPV_garden_STEM_inclusive"
+```
+
+
+```{r percentiles_private_decision, warning=FALSE, message=FALSE}
+# Calculate the 5th and 95th percentiles for both scenarios
+quantile(garden_simulation_results$y$NPV_garden_inclusive, probs = c(0.05, 0.95))
+quantile(garden_simulation_results$y$NPV_garden_STEM_inclusive, probs = c(0.05, 0.95))
 ```
 
 Summary of the NPVs for the passive education garden and STEM options for public schools:
 
 ```{r summary_public_decision, warning=FALSE, message=FALSE}
+# Summary for public school passive and STEM gardens
 summary(garden_simulation_results$y[3:4]) #"NPV_garden_public_school_inclusive"      "NPV_garden_STEM_public_school_inclusive"
 ```
+
+```{r percentiles_public_decision, warning=FALSE, message=FALSE}
+# Calculate the 5th and 95th percentiles for both scenarios
+quantile(garden_simulation_results$y$NPV_garden_public_school_inclusive, probs = c(0.05, 0.95))
+quantile(garden_simulation_results$y$NPV_garden_STEM_public_school_inclusive, probs = c(0.05, 0.95))
+```
+
+## Child health outcomes
 
 Summary of the child health outcomes for private and public schools:
 
 ```{r summary_child_health, warning=FALSE, message=FALSE}
 summary(garden_simulation_results$y[10:11]) #"health" "health_STEM" 
 ```
+
+## Biodiversity outcomes
 
 Summary of the biodiversity outcomes for the passive education garden and STEM options for private and public schools:
 
@@ -168,6 +187,7 @@ First year expected costs for a school garden with STEM education:
 ```{r summary_first_year_costs_stem, warning=FALSE, message=FALSE}
 summary(garden_simulation_results$y$Cashflow_garden_STEM1)
 ```
+
 ## Cash flows
 
 Cash flow plots of the garden option without formal STEM education. These are the expected returns for public and private schools over the intervention.
