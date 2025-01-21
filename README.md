@@ -13,7 +13,7 @@ Working backward in complexity these three models describe the impact of the sch
 
 1. as a decision for school boards, 
 
-**General school garden model illustration**
+**General school garden model illustration. Conceptual overview of the school garden food environment and its role in shaping interventions aimed at improving child health. The diagram illustrates key components, including underlying factors (e.g., income status and health knowledge), intervention effects (e.g., quality, safety and perception of garden products) and intervention outcomes (e.g., acquiring, consuming and ultimately health impacts). Relationships between components highlight how school gardens influence children's willingness and ability to access nutritious foods, their desirability for healthier options and the overall effect on nutrition and health outcomes.**
 ![CODAS_Garden_Impact pathway](https://github.com/CWWhitney/nifam_codas_school_garden/assets/19190662/65e3af17-bc53-4b58-8e00-3115925d928f)
 
 2. for food environment outcomes
