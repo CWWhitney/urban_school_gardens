@@ -25,4 +25,4 @@ and 3. interventions to the food environment.
 
 **Food environments overview**
 ![outline_food_env_general](https://github.com/CWWhitney/nifam_codas_school_garden/assets/19190662/6275853f-beb2-4cf6-9772-24137fd27b6d)
-
+Food environment characteristics and the influence on food choices. Intervention effects (blue), affordability (ability / willingness to pay), desirability (actual / perceived need for food), accessibility (actual / perceived access), all leading to the ultimate intervention outcome (orange) of nutrition and health: the implication for acquiring, preparing and consuming food given all underlying and external factors (dotted black circles)
