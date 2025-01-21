@@ -102,4 +102,4 @@ costs_of_non_garden_land_use,1,,5,posnorm,Cost of non garden land use (million V
 ,,,,,,
 land_access,0.6,,0.95,tnorm_0_1,Chance that the school has acess to land (%),uncertain
 suitability_of_land_for_garden,0.6,,0.95,tnorm_0_1,Chance that the land at the school is suitable (%),uncertain
-beurocratic_barriers,0.01,,0.5,tnorm_0_1,Chance that beurocratic barriers will inhibit the process (%),uncertain
+bureaucratic_barriers,0.01,,0.5,tnorm_0_1,Chance that bureaucratic barriers will inhibit the process (%),uncertain

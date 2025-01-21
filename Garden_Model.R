@@ -508,14 +508,14 @@ school_garden_function <- function(x, varnames){
   # many of the schools (especially public schools) can be overwhelmed with bureaucracy
   # CODAS was unable to overcome the bureaucracy hurdles 
   # We (CODAS and NIFAM) were unable to partner with public schools
-  stop_garden_beurocratic_barriers <- chance_event(beurocratic_barriers)
+  stop_garden_bureaucratic_barriers <- chance_event(bureaucratic_barriers)
   
   ## if land turns out to be unsuitable after some investment 
   ## or bureaucratic barriers permit the use of the garden 
   ## then establishment costs are incurred
   ## but there are no returns 
   if (stop_garden_unsuitable_land == 1 | 
-     stop_garden_beurocratic_barriers == 1) {
+     stop_garden_bureaucratic_barriers == 1) {
     # no benefits from the garden
     total_benefit_public_school <- rep(0, number_of_years)
     total_benefit_public_school_inclusive <- rep(0, number_of_years)
