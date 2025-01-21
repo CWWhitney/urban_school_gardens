@@ -48,9 +48,9 @@ fertilizer,1,,2,posnorm,Standard annual fertilizer i.e. EM to add to compost (mi
 fertilizer_m2,0.01,,0.02,posnorm,Additional (per m2) fertilizer i.e. EM to add to compost (million VND/yr),uncertain
 plant_protection,2,,5,posnorm,Integrated Pest Managemernt (IPM) (million VND/yr),uncertain
 plant_protection_m2,0.02,,0.05,posnorm,Integrated Pest Managemernt (IPM) (million VND/yr),uncertain
-livestock_maint,2,,10,posnorm,Standard annual costs of mainitaining animals (million VND/yr),uncertain
-livestock_maint_m2,0.02,,0.1,posnorm,Additional (per m2) mainitaining animals (million VND/yr),uncertain
-annual_teacher_training,5,,276,posnorm,Mainitaining teacher training (million VND/yr),uncertain
+livestock_maint,2,,10,posnorm,Standard annual costs of maintaining animals (million VND/yr),uncertain
+livestock_maint_m2,0.02,,0.1,posnorm,Additional (per m2) maintaining animals (million VND/yr),uncertain
+annual_teacher_training,5,,276,posnorm,Maintaining teacher training (million VND/yr),uncertain
 ,,,,,,
 if_school_has_canteen,0.2,,0.5,tnorm_0_1,Chance that the school has a canteen (%),controllable
 canteen_savings,1,,5,posnorm,Canteen savings (million VND/yr),uncertain
