@@ -485,6 +485,7 @@ estimates = estimates[estimates$variable !="", ]
 estimates[estimates$control_status == "controllable", ]
 
 ```
+
 Variables that are considered out of the control of the decision maker included:
 
 ```{r pareto_uncontrolled}
@@ -631,8 +632,6 @@ mcSimulation_table_x <- data.frame(garden_simulation_results$x[4:7]) #, 21:30, 3
 # a summary table with missing, mean, median and sd
 
 ```
-
-
 
 The table shows the variable name, the plot overview as well as the number of missing values, the mean, median and the standard deviation of the distribution for variables that calculated in the model.
 
