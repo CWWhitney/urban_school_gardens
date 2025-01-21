@@ -240,7 +240,7 @@ plot_pls_garden <- plot_pls(plsrResults = pls_result,
   theme(legend.position = "none", axis.title.x = element_blank(), 
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + scale_x_continuous(limits = c(0, 7)) + ggtitle(label_private_school) + 
-  annotate(geom="text", x=5, y=1, label="Passive garden")
+  annotate(geom="text", x=5, y=2, label="Passive garden")
 
 #For school garden with formal STEM education
 pls_result_STEM <- pls_model(object = garden_simulation_results,
@@ -251,7 +251,7 @@ plot_pls_STEM <- plot_pls(plsrResults = pls_result_STEM,
                           input_table = input_table, 
                           threshold = 0.9) + 
   scale_x_continuous(limits = c(0, 7)) + 
-  annotate(geom="text", x=5, y=1, label="STEM garden")
+  annotate(geom="text", x=5, y=2, label="STEM garden")
 
 plot_pls_garden / plot_pls_STEM 
 ```
@@ -299,7 +299,7 @@ plot_pls_garden_public <- plot_pls(pls_result_garden_public,
   axis.text.x = element_blank(),
   axis.ticks = element_blank()) + 
   scale_x_continuous(limits = c(0, 7)) + ggtitle(label_public_school) + 
-  annotate(geom="text", x=5, y=1, label="Passive garden")
+  annotate(geom="text", x=5, y=2, label="Passive garden")
 
 #For school garden with formal STEM education
 pls_result_STEM_public <- pls_model(object = garden_simulation_results,
@@ -309,7 +309,7 @@ pls_result_STEM_public <- pls_model(object = garden_simulation_results,
 
 plot_pls_public_STEM <- plot_pls(pls_result_STEM_public, 
                                  input_table = input_table, threshold = 0.9) + scale_x_continuous(limits = c(0, 7)) + 
-  annotate(geom="text", x=5, y=1, label="STEM garden")
+  annotate(geom="text", x=5, y=2, label="STEM garden")
 
 plot_pls_garden_public / plot_pls_public_STEM 
 ```
