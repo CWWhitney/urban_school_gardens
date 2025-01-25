@@ -47,10 +47,16 @@ plot_pareto <- function(x, y, data, colors) {
   ggplot(data, aes_string(x = x, y = y, color = "Scenario")) +
     geom_point(alpha = 0.7, size = 3) +
   scale_color_brewer(palette = CMAP) +
-    theme_minimal(base_size = 14) +
-    theme_gray() +
-    theme(legend.position = "none") +
-    labs(x = x, y = y)
+    theme_minimal() +
+    theme(
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid.major = element_line(color = "gray80"),
+      panel.grid.minor = element_line(color = "gray90"),
+      axis.text = element_text(size = 18),  # Increase axis text size
+      axis.title = element_text(size = 22),  # Increase 
+      legend.position = "none"
+    ) +
+    labs(x = x, y = y) 
 }
 
 # Generate individual plots for each pair of objectives
@@ -66,7 +72,7 @@ plot_bio_health <- plot_pareto("Biodiversity", "Health", data, colors)+
 base_plot <- ggplot(data, aes(x = Economic, y = Biodiversity, color = Scenario)) +
   geom_point(alpha = 0.7, size = 3) +
   scale_color_brewer(palette = CMAP) +
-  theme_minimal(base_size = 14) +
+  theme_minimal(base_size = 20) +
   theme(legend.position = "right")
 
 # Extract the legend
@@ -85,7 +91,7 @@ final_plot <- cowplot::plot_grid(
   ncol = 2, 
   nrow = 2, 
   rel_widths = c(1, 1), 
-  rel_heights = c(1, 1)
+  rel_heights = c(1, 1) 
 )
 
 #final_plot
