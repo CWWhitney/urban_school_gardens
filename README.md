@@ -1,8 +1,10 @@
-# Urban School Garden 
+# Urban School Gardens 
 
 Nutrition Intervention Forecasting and Monitoring (NIFAM) intervention by NIFAM partner (CODAS) funded by BLE (German Federal Office for Agriculture and Food)
 
 https://htmlpreview.github.io/?https://github.com/CWWhitney/urban_school_gardens/blob/main/Index.html
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14767816.svg)](https://doi.org/10.5281/zenodo.14767816)
 
 Decision model for a school garden nutrition intervention in urban Hanoi. There are three simulated options: 
 1. A school garden on existing school property, as an informal addition to the school and only passively used for education, without any formal educational integration
