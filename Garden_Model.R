@@ -15,7 +15,6 @@ source("functions/discount.R")
 
 # make variables for testing our model (only for construction)
 source("functions/make_variables.R")
-source("functions/estimate_read_csv.R")
 make_variables(decisionSupport::estimate_read_csv(paste("data/inputs_school_garden.csv",sep="")))
 
 # The model ####
