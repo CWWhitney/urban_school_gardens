@@ -1,4 +1,4 @@
-# Model of the school garden (see Index.RMD for the explaination and posthoc)
+# Model of the school garden (see Index.RMD for the explanation and posthoc)
 
 # We need these functions to run our model ####
 # value_varrier function to add variability to values
@@ -10,6 +10,16 @@ source("functions/chance_event.R")
 
 # discount values for NPV (time value for money)
 source("functions/discount.R")
+
+# Check variables ####
+
+# Check in the input table and script have the same variables
+data <- read.csv("data/inputs_school_garden.csv")  # replace with your actual CSV file name
+var_list <- unique(data$variable)  # extract the variable names you're checking
+r_script_lines <- readLines("Garden_Model.R")  # replace with your actual R file
+r_script_text <- paste(r_script_lines, collapse = " ")
+# Check which variables from CSV are NOT found in the R script text
+var_list[!sapply(var_list, function(v) grepl(v, r_script_text))]
 
 # Model testing ####
 
