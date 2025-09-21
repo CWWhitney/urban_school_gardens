@@ -1,6 +1,6 @@
 ---
 title: "Supplementary: A Decision-Analytic Framework for School Garden Investments in Vietnam: Evaluating Trade-offs for Nutrition, Biodiversity, and Economic Outcomes"
-author: "Cory Whitney, Thi Thu Giang Luu, Johannes Kopton, Simone Kathrin Kriesemer, Eike Luedeling"
+author: "Cory Whitney, Johannes Kopton"
 output:
   html_document:
     selfcontained: true
