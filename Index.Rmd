@@ -1,5 +1,6 @@
 ---
-title: "School gardens in urban Hanoi"
+title: "Supplementary: A Decision-Analytic Framework for School Garden Investments in Vietnam: Evaluating Trade-offs for Nutrition, Biodiversity, and Economic Outcomes"
+author: "Cory Whitney, Thi Thu Giang Luu, Johannes Kopton, Simone Kathrin Kriesemer, Eike Luedeling"
 output:
   html_document:
     selfcontained: true
@@ -94,7 +95,7 @@ plot_distributions(mcSimulation_object = garden_simulation_results,
                                     base_size = 11, 
                                     x_axis_name = "Net Present Value (NPV) outcomes (million VND)")
 
-ggsave("figures/Fig_3_Boxplots.png", width = 15, height = 8, units = "cm")
+# ggsave("figures/Fig_3_Boxplots.png", width = 15, height = 8, units = "cm")
 ```
 
 As boxplots and distributions for public schools:
@@ -220,6 +221,7 @@ Total expected costs for a school garden with and without STEM education:
 ```{r summary_costs, warning=FALSE, message=FALSE}
 summary(garden_simulation_results$y[12:13])# "total_costs" "total_costs_STEM"
 ```
+
 ## Cash flows
 
 First year expected costs for a school garden:
@@ -309,7 +311,7 @@ plot_cashflow_STEM_public <- plot_cashflow_STEM_public + ylim(y_limits)
 (plot_cashflow_garden / plot_cashflow_STEM) | 
 (plot_cashflow_garden_public / plot_cashflow_STEM_public)
 
-ggsave("figures/Fig_4_cashflow.png", width=6, height=4) 
+# ggsave("figures/Fig_4_cashflow.png", width=6, height=4) 
 
 ```
 
@@ -469,7 +471,7 @@ public_pls <- plot_pls_garden / plot_pls_STEM + theme(legend.position = "none", 
 public_pls /
 plot_pls_garden_public / plot_pls_public_STEM + plot_layout(heights = c(6, 6, 7, 8))
 
-ggsave("figures/Fig_5_VIP.png", width=8, height=7) 
+# ggsave("figures/Fig_5_VIP.png", width=8, height=7) 
 
 ```
 
@@ -595,7 +597,7 @@ source("pareto/plot_pareto_scenarios.R")
 final_plot
 
 # Save the plot
-ggsave("figures/Fig_8_pareto_fronts.png", final_plot, width = 10, height = 8, bg = "white")
+# ggsave("figures/Fig_8_pareto_fronts.png", final_plot, width = 10, height = 8, bg = "white")
 
 ```
 
