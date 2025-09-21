@@ -661,6 +661,7 @@ school_garden_function <- function(x, varnames){
   
   # Beware, if we do not name our outputs (left-hand side of the equal sign) 
   # in the return section, the variables will be called output_1, _2, etc.
+  # must be done as list()
   return(list(NPV_garden_inclusive = NPV_garden_inclusive,
               # comparative results do - do nothing
               NPV_garden_STEM_inclusive = NPV_garden_STEM_inclusive,
