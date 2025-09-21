@@ -65,7 +65,6 @@ outside_investment_value,1,,5,posnorm,Outside investment value (reputation) gard
 outside_investment_value_STEM,1,,8,posnorm,Outside investment value (reputation) STEM (million VND/year),uncertain
 ,,,,,,
 increased_enrollment_value,0.1,,5,posnorm,Increased enrollment/tuition income (reputation) garden (million VND/year),uncertain
-increased_enrollment_value_STEM,10,,100,posnorm,Increased enrollment/tuition income (reputation) STEM (million VND/year),uncertain
 ,,,,,,
 child_veg_health_care_savings,0.1,,5,posnorm,Healthcare savings (child) access to garden (million VND/year),uncertain
 child_veg_school_performance_value,0.01,,0.2,posnorm,School performance (children) eating garden veg (million VND/year),uncertain
