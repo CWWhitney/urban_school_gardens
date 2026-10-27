@@ -1,0 +1,65 @@
+---
+title: "School garden decision model: differences between the published analysis and a corrected version"
+subtitle: "Draft for discussion among the co-authors"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output:
+  word_document: default
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+source("functions/corrigendum_tables.R")
+kt <- function(x, ...) knitr::kable(x, row.names = FALSE, ...)
+
+# Results saved by 01_model_comparison.Rmd
+comparison <- read.csv("outputs/original_vs_corrected.csv")
+
+g    <- function(v, o, col = "mean") cmp_get(comparison, v, o, col)
+drop <- npv_drop_pct(comparison)
+fix3 <- fix3_drop(comparison)
+```
+
+
+**Manuscript.** Whitney, C., Luu, T. T. G., Kopton, J. & Luedeling, E. (2026) A decision-analysis framework for school garden investments in Vietnam: evaluating trade-offs for nutrition, biodiversity, and economic outcomes. *Humanities and Social Sciences Communications* 13(1), 580. https://doi.org/10.1057/s41599-026-07204-0 (bibliographic details checked against Crossref, 2026-10-18).
+
+**Code.** https://github.com/CWWhitney/nifam_codas_school_garden (`Garden_Model.R`, commit 8fa2272); archived on Zenodo, 10.5281/zenodo.17171829 (v1.0.0, as cited in the manuscript).
+
+# 1. Summary
+
+While re-using the model for a value-of-information analysis we found three coding defects in `Garden_Model.R`. Running the published code reproduces the numbers in the manuscript, so the manuscript reflects the code as it stands. Correcting the defects changes the results substantially, but not the main ranking of options:
+
+- A passive garden still beats a STEM garden, and both still beat the no-garden use of the land, on average (private passive garden: mean NPV `r f0(g("published", "NPV_garden_inclusive"))` `r arrow` `r f0(g("all_fixed", "NPV_garden_inclusive"))` million VND).
+- Mean NPVs fall by `r sprintf("%.0f", min(drop))`% to `r sprintf("%.0f", max(drop))`% across the four decision options (public school STEM garden: `r f0(g("published", "NPV_garden_STEM_public_school_inclusive"))` `r arrow` `r f0(g("all_fixed", "NPV_garden_STEM_public_school_inclusive"))`, close to zero).
+- For public schools the **median** NPV of the passive garden changes sign (`r f0(g("published", "NPV_garden_public_school_inclusive", "median"))` `r arrow` `r f0(g("all_fixed", "NPV_garden_public_school_inclusive", "median"))`) and the probability of a positive NPV falls from `r f2(g("published", "NPV_garden_public_school_inclusive", "prob_positive"))` to `r f2(g("all_fixed", "NPV_garden_public_school_inclusive", "prob_positive"))`. This is the conclusion most affected.
+- The Pareto picture changes: garden size now trades economic return against biodiversity, so the manuscript's "largest garden is optimal" no longer holds.
+- The stand-alone health and biodiversity results are **not** changed by the corrections.
+
+# 2. The three defects
+
+These three defects are in `Garden_Model.R` (commit 8fa2272 of the original repository). The original is kept unchanged in `functions/school_garden_model_original.R`; the corrected model is `functions/school_garden_model.R`, with one switch per fix (R `options()`). With all switches off it reproduces the published model exactly (identical output for the same seed; shown in `01_model_comparison.Rmd` and tested in `tests.R`).
+
+## Fix 1: the "no land" branch is overwritten
+
+`stop_garden_no_land <- chance_event(1-land_access)` feeds an `if` that sets benefits and costs to zero for schools without land. A second `if`, on land suitability and bureaucratic barriers, then assigns `total_benefit_public_school`, `total_cost_public_school` and the STEM equivalents in both of its branches, overwriting the first. As a result `land_access` has no effect on any NPV; it only zeroed the stand-alone environment and health outputs. The corrected model applies the no-land case to benefits and costs as well, as the code comments describe.
+
+## Fix 2: cost-zeroing assignment modifies `total_cost`
+
+```r
+total_cost_public_school <- (total_cost[2:number_of_years]<-0)
+total_cost_STEM_public_school <- (total_cost_STEM[2:number_of_years]<-0)
+```
+
+The intent, stated in a code comment ("costs only in year 1"), is to keep year-1 establishment costs and drop later costs when the garden is stopped. The assignment instead (a) zeroes years 2--n of `total_cost` itself, which is also used for the *private-school* results computed later, and (b) sets `total_cost_public_school` to the scalar 0, losing even the year-1 cost. The corrected code uses `c(total_cost[1], rep(0, n-1))` and leaves `total_cost` untouched.
+
+## Fix 3: per-m^2^ maintenance costs are never added
+
+The expression `garden_maintenance_cost + ((maintaining_labor_m2 + seed_costs_m2 + fertilizer_m2 + plant_protection_m2) * size_of_garden)` is evaluated but not assigned, so these area-based costs never enter `garden_maintenance_cost`. The corrected code assigns it. On its own this lowers the mean NPVs of the four options by `r sprintf("%.0f", min(fix3))` to `r sprintf("%.0f", max(fix3))` million VND.
+
+# 3. Key numbers, published vs corrected
+
+10,000 Monte Carlo runs, `set.seed(42)`. Million VND. MC s.e. = Monte Carlo standard error of the mean. (Computed in `01_model_comparison.Rmd`, saved to `outputs/original_vs_corrected.csv`.)
+
+```{r table-npv}
+kt(npv_table(comparison, decision_outputs))
+```
+

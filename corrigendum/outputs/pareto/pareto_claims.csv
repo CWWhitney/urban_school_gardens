@@ -1,0 +1,8 @@
+"claim","published","corrected"
+"Passive private garden is the most profitable (lines 558-559): highest economic return on the front","Private, Passive garden (max 1350)","Private, Passive garden (max 1123)"
+"Gardens without STEM have higher health (559-560): median health, passive vs STEM, private; public","795 vs 607; 770 vs 596","768 vs 606; 784 vs 618"
+"Trade-off between health and economic return in all scenarios (560-561): Spearman correlation","-0.95 / -0.97 / -0.98 / -0.97","-0.63 / -0.65 / -0.56 / -0.30"
+"Health and biodiversity synergistic, no trade-off (565-566): Spearman correlation","0.15 / 0.16 / 0.14 / 0.25","0.36 / 0.38 / 0.11 / -0.39"
+"Animals raise health by 6.5% at 5% lower economic return (563-564): mean difference, animals vs none (our reading of the method)","health 4.4%, economic -7.7%","health 4.8%, economic -23.6%"
+"Optimal garden size is the largest area (568-569): share of front solutions with size >= 95 m2","1.00 / 1.00 / 0.96 / 1.00","0.10 / 0.09 / 0.16 / 0.02"
+"School canteen unanimously chosen (569-570): share of front solutions with a canteen","1.00 / 1.00 / 0.33 / 1.00","0.94 / 0.96 / 0.86 / 0.90"

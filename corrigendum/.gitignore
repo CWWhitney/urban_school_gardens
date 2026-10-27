@@ -1,0 +1,4 @@
+# Rendered documents (rebuild with rmarkdown::render); the corrigendum .docx files are kept
+0[1-3]_*.html
+*_files/
+.Rhistory

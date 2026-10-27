@@ -1,0 +1,154 @@
+---
+title: "School garden model: published and corrected, compared with the manuscript"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    df_print: paged
+params:
+  refresh: false        # re-run the quick analyses (a few minutes)
+  refresh_evpi: false   # re-run the per-variable EVPI (about 20 minutes)
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+source("functions/load_all.R")
+library(ggplot2)
+dir.create("outputs", showWarnings = FALSE)
+refresh <- isTRUE(params$refresh)
+refresh_evpi <- isTRUE(params$refresh_evpi)
+```
+
+This document runs the published school garden model (Whitney et al., `Garden_Model.R`) and a
+corrected copy, and compares both with the numbers printed in the manuscript. All functions are in
+`functions/`; the heavy results are saved in `outputs/` and re-used unless the document is rendered with
+`rmarkdown::render("01_model_comparison.Rmd", params = list(refresh = TRUE))`
+(add `refresh_evpi = TRUE` for the slow per-variable EVPI).
+The results feed `corrigendum_school_garden_model.Rmd`.
+
+# The three corrections
+
+The published model is kept unchanged in `functions/school_garden_model_original.R`. The corrected model
+(`functions/school_garden_model.R`) has one `options()` switch per correction, so that each can be turned
+on alone (`run_garden_mc(fixes = ...)`):
+
+1. **`garden.fix_land_block`** (published lines 483-546). The `stop_garden_no_land` branch is overwritten
+   by the later unsuitable-land / bureaucracy `if`, so `land_access` has no effect on any NPV.
+2. **`garden.fix_cost_zeroing`** (lines 532, 537). `total_cost_public_school <- (total_cost[2:n] <- 0)`
+   zeroes years 2-n of `total_cost` itself, which also feeds the private-school results, and sets the
+   public cost to the scalar 0.
+3. **`garden.fix_maint_m2`** (lines 100-105). The per-m2 maintenance costs are computed but never added to
+   `garden_maintenance_cost`.
+
+With all switches off the corrected model must reproduce the published one exactly:
+
+```{r identical}
+original <- load_original_model()
+a <- run_garden_mc(FALSE, n = 3000, seed = 1, model = original)
+b <- run_garden_mc(FALSE, n = 3000, seed = 1)          # corrected model, corrections switched off
+all.equal(a$y, b$y)
+```
+
+# Published and corrected results (settings of the manuscript: 10,000 runs, `set.seed(42)`)
+
+Each correction alone and all three together; million VND, NPV relative to the no-garden use of the land.
+
+```{r compare}
+comparison <- cached_csv("outputs/original_vs_corrected.csv", compare_variants(), refresh)
+means <- reshape(comparison[, c("variant", "output", "mean")], idvar = "output",
+                 timevar = "variant", direction = "wide")
+names(means) <- sub("mean\\.", "", names(means))
+means <- means[, c("output", names(garden_variants))]
+means$change_all_fixed_pct <- round(100 * (means$all_fixed - means$published) / abs(means$published), 1)
+knitr::kable(means, digits = 1, row.names = FALSE, caption = "Mean by output")
+```
+
+```{r compare-prob}
+p <- comparison[comparison$output %in% garden_outputs[1:8], c("variant", "output", "prob_positive")]
+knitr::kable(reshape(p, idvar = "output", timevar = "variant", direction = "wide"),
+             digits = 3, row.names = FALSE, caption = "P(NPV > 0)")
+```
+
+```{r npv-figure, fig.width = 8, fig.height = 4}
+mc_pub <- run_garden_mc(FALSE, model = original)
+mc_cor <- run_garden_mc(TRUE)
+long <- function(mc, version) {
+  d <- mc$y[c("NPV_garden_inclusive", "NPV_garden_STEM_inclusive",
+              "NPV_garden_public_school_inclusive", "NPV_garden_STEM_public_school_inclusive")]
+  names(d) <- c("Private passive", "Private STEM", "Public passive", "Public STEM")
+  data.frame(version = version, stack(d))
+}
+d <- rbind(long(mc_pub, "published code"), long(mc_cor, "corrected"))
+d$ind <- factor(d$ind, levels = rev(c("Private passive", "Private STEM", "Public passive", "Public STEM")))
+fig_npv <- ggplot(d, aes(values, ind, fill = version)) +
+  geom_boxplot(outlier.alpha = 0.1, outlier.size = 0.5) +
+  scale_fill_manual(values = c("published code" = "grey70", corrected = "cadetblue")) +
+  coord_cartesian(xlim = c(-3000, 6000)) + theme_bw() +
+  labs(x = "NPV relative to no garden (million VND)", y = NULL, fill = NULL)
+ggsave("outputs/fig_npv_published_vs_corrected.png", fig_npv, width = 8, height = 4, dpi = 200)
+fig_npv
+```
+
+# The manuscript's numbers against the published code (20 Monte Carlo seeds)
+
+Values quoted in `Manuscript.pdf` (Resubmission; line numbers are the manuscript's) against the published
+code and the corrected model, each over 20 seeds of 10,000 runs, so that Monte Carlo variation can be told
+apart from real differences (`manuscript_values()`, `manuscript_seed_check()`).
+
+```{r manuscript-check}
+mchk <- cached_csv("outputs/manuscript_check.csv", manuscript_seed_check(), refresh)
+mchk_show <- mchk
+mchk_show[] <- lapply(mchk_show, function(z) if (is.numeric(z)) signif(z, 4) else z)
+knitr::kable(mchk_show, row.names = FALSE)
+```
+
+```{r manuscript-summary}
+cat("Quantities where the manuscript value is outside the 20-seed range of the published code:\n")
+print(mchk$item[!mchk$manuscript_within_published_range])
+```
+
+Number of input variables (the manuscript quotes 104 in line 202, 71 in line 543 and 75 PLS predictors in line 492):
+
+```{r counts}
+input_counts()
+```
+
+# PLS / VIP (manuscript Figure 5)
+
+One PLS component of each decision NPV on all varying inputs (`pls_vip_check()`).
+
+```{r pls}
+if (refresh || !file.exists("outputs/pls_variance_explained.csv")) {
+  pls_pub <- pls_vip_check(mc_pub); pls_cor <- pls_vip_check(mc_cor)
+  ve <- rbind(cbind(version = "published", pls_pub$var_explained), cbind(version = "corrected", pls_cor$var_explained))
+  top <- rbind(cbind(version = "published", pls_pub$top), cbind(version = "corrected", pls_cor$top))
+  write.csv(ve, "outputs/pls_variance_explained.csv", row.names = FALSE)
+  write.csv(top, "outputs/pls_top_vip.csv", row.names = FALSE)
+}
+ve <- read.csv("outputs/pls_variance_explained.csv")
+knitr::kable(ve, digits = 1, caption = "Variance explained (%); the manuscript gives 81, 75, 34, 45")
+```
+
+# Per-variable EVPI (manuscript lines 517-529)
+
+The method of the manuscript (`multi_EVPI_test`, LOESS-based). Slow (about 20 minutes on 11 cores), so the
+result is saved in `outputs/evpi_per_variable.csv` and re-used.
+
+```{r evpi}
+evpi_var <- cached_csv("outputs/evpi_per_variable.csv",
+  rbind(cbind(version = "published", evpi_per_variable(FALSE)),
+        cbind(version = "corrected", evpi_per_variable(TRUE))), refresh_evpi)
+top <- do.call(rbind, lapply(split(evpi_var, list(evpi_var$version, evpi_var$output)),
+                             function(d) head(d[order(-d$EVPI), c("version", "output", "variable", "EVPI")], 4)))
+knitr::kable(top, digits = 1, row.names = FALSE, caption = "Four largest per-variable EVPIs per option (million VND)")
+```
+
+The saved `data/data_evpi.Rda` of the original repository can be compared with the published-code rows:
+
+```{r evpi-rda}
+if (file.exists("data/data_evpi.Rda")) {
+  load("data/data_evpi.Rda")   # object `evpi`
+  d <- evpi$NPV_garden_STEM_public_school_inclusive
+  head(d[order(-d$EVPI), c("variable", "EVPI")], 4)
+}
+```

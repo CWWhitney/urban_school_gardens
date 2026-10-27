@@ -1,0 +1,5 @@
+"scenario","size_of_garden","if_animals_in_garden","if_school_has_canteen","school_event_freq","if_parking"
+"Private, Passive garden",52.541051723562,0.5125,0.9375,10,0.0125
+"Private, STEM garden",54.0131573010609,0.4875,0.9625,9.98973490925852,0
+"Public, Passive garden",60.4904635723523,0.5625,0.8625,9.98994838532121,0.0125
+"Public, STEM garden",46.1476709838049,0.549019607843137,0.901960784313726,10,0
